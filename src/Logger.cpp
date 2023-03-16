@@ -34,3 +34,9 @@ void Logger::log(std::string author, std::string message)
     Message msg = {.author = author, .time = pros::millis(), .message = message};
     pros::c::queue_append(queue, &msg, 10);
 }
+void Logger::close() {
+  this->log("Logger", "Logger closed!");
+  fclose(logFile);
+  pros::delay(20);
+  pros::c::task_delete(task);
+}

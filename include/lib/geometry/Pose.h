@@ -12,6 +12,4 @@ class Pose{
         double getY() const;
         double getTheta() const;
         double getShortTheta() const;
-        
-
 }

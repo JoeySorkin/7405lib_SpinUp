@@ -1,16 +1,16 @@
 #pragma once
 
-#include "Constants.h"
-#include "main.h"
+#include "../Constants.h"
+#include "../main.h"
 
-#define Odom Odometry::getInstance()
+#define sOdom Odometry::getInstance()
 
 class Odometry:
 {
 private:
-    pros::rotation leftWheel();
-    pros::rotation rightWheel();
-    pros::rotation backWheel();
+    pros::Rotation leftWheel();
+    pros::Rotation rightWheel();
+    pros::Rotation backWheel();
     static Odometry *INSTANCE;
 
 public:

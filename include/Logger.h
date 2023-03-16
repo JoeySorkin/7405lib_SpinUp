@@ -33,4 +33,5 @@ public:
         return INSTANCE;
     }
     void initialize();
+    void close();
 };

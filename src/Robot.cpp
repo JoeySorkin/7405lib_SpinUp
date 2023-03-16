@@ -1,5 +1,6 @@
 
 #include "Robot.h"
+Robot *Robot::INSTANCE = nullptr;
 
 void Robot::initialize()
 {
