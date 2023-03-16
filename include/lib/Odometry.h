@@ -1,24 +1,30 @@
 #pragma once
 
-#include "../Constants.h"
 #include "../main.h"
+#include "geometry/kinState.h"
 
 #define sOdom Odometry::getInstance()
 
-class Odometry:
-{
+class Odometry{
 private:
-    pros::Rotation leftWheel();
-    pros::Rotation rightWheel();
-    pros::Rotation backWheel();
+    pros::Rotation leftWheel, rightWheel, backWheel;
+    pros::task_t odom_task;
+    pros::Mutex stateMutex;
+
+    double prev_l, prev_r, prev_b;
+    
+    kinState curr_state;
+
     static Odometry *INSTANCE;
 
+    void updatePosition(void* params);
+
 public:
+    Odometry();
     void initialize();
-    static Odometry *getInstance()
-    {
-        if (!INSTANCE)
-        {
+
+    static Odometry *getInstance(){
+        if (!INSTANCE){
             INSTANCE = new Odometry();
         }
         return INSTANCE;
