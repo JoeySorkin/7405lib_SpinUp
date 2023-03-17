@@ -21,6 +21,7 @@ private:
 
 public:
     Odometry();
+    kinState getMotion();
     void initialize();
 
     static Odometry *getInstance(){

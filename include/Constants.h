@@ -6,9 +6,10 @@ namespace ports{
     const int backRotation = 3;
 }
 
-namespace chassis{
+namespace odometers{
     const int trackWidth = 1;
     const int leftDeadwheelDiameter = 1;
     const int rightDeadwheelDiameter = 1;
     const int backDeadwheelDiameter = 1;
+    const int backOffset = 1;
 }
