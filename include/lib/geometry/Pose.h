@@ -17,9 +17,9 @@ class Pose{
 
         Pose transformBy(double delta_x, double delta_y, double delta_theta) const;
         Pose transformBy(Pose other) const;
-        // Pose exp?????
         static Pose getTransformation(Pose &A, Pose &B);
         Pose scale(double scalar) const;
+        // Pose exp?????
         
 
 };
