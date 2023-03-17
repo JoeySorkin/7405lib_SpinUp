@@ -11,12 +11,8 @@ private:
 
 public:
     kinState();
-
-    kinState(Pose pos, double xvelo, double yvelo, double hvelo, double xaccel, double yaccel, double haccel): 
-    position(pos), velo_state((substate){xvelo, yvelo, hvelo}), accel_state((substate){xaccel, yaccel, haccel}){};
-
-    kinState(double xpos, double ypos, double hpos, double xvelo, double yvelo, double hvelo, double xaccel, double yaccel, double haccel): 
-    position(xpos, ypos, hpos), velo_state((substate){xvelo, yvelo, hvelo}), accel_state((substate){xaccel, yaccel, haccel}){};
+    
+    kinState(Pose pos, substate velo, substate accel): position(pos), velo_state(velo), accel_state(accel){};
 
     Pose position;
     substate velocity();

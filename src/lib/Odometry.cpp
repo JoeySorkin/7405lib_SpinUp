@@ -49,6 +49,7 @@ void Odometry::updatePosition(void* params){
 }
 
 kinState Odometry::getMotion(){
+    
     stateMutex.take(TIMEOUT_MAX);
     kinState p = curr_state;
     stateMutex.give();
