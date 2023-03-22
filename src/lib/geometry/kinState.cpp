@@ -20,7 +20,7 @@ void kinState::setAcceleration(double _x, double _y, double _h){
     accel_state.theta = _h;
 }
 
-kinState kinState::predictFuture(double dt){
+kinState kinState::predict(double dt){
     kinState future = *this;
 
     future.position.transformBy((velo_state.x * dt) + (accel_state.x * dt * dt * 0.5), 
