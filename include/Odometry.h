@@ -5,27 +5,30 @@
 
 #define sOdom Odometry::getInstance()
 
-class Odometry{
+class Odometry
+{
 private:
     pros::Rotation leftWheel, rightWheel, backWheel;
     pros::task_t odom_task;
     pros::Mutex stateMutex;
 
     double prev_l, prev_r, prev_b;
-    
+
     kinState curr_state;
 
     static Odometry *INSTANCE;
 
-    void updatePosition(void* params);
+    void updatePosition(void *params);
 
 public:
     Odometry();
-    kinState getMotion();
+    kinState getCurrentState();
     void initialize();
 
-    static Odometry *getInstance(){
-        if (!INSTANCE){
+    static Odometry *getInstance()
+    {
+        if (!INSTANCE)
+        {
             INSTANCE = new Odometry();
         }
         return INSTANCE;
