@@ -1,4 +1,5 @@
 #include "Drive.h"
+#include "lib/physics/NullMotion.h"
 
 Drive *Drive::INSTANCE = nullptr;
 
@@ -13,14 +14,15 @@ void Drive::initialize()
 
 void Drive::runner(void *ignored)
 {
-    Motion currentMotion = Motion::NullMotion();
+    Motion* currentMotion =  new NullMotion();
     while (true)
     {
         // get current motion
         currentMotion = getCurrentMotion(200); // TODO: add thread overload error thingy
 
         // get computed motor voltages
-        auto motor_volts = currentMotion.calculateVoltages(sOdom->getCurrentState());
+        auto motor_volts =
+            currentMotion->calculateVoltages(sOdom->getCurrentState());
 
         // set those
         setVoltageLeft(motor_volts.left);
@@ -29,7 +31,7 @@ void Drive::runner(void *ignored)
         // check if motion has timed out (if it has, set current motion to nullmotion)
         if (isTimedOut)
         {
-            currentMotion = Motion::NullMotion();
+            currentMotion = new NullMotion();
             isTimedOut = false;
         }
 
@@ -39,9 +41,9 @@ void Drive::runner(void *ignored)
 
 bool Drive::waitUntilSettled(uint32_t timeout)
 {
-    Timeout timeout = Timeout(timeout);
+    Timeout timer = Timeout(timeout);
 
-    while (!timeout.timedOut())
+    while (!timer.timedOut())
     {
         if (isSettled.load())
         {

@@ -1,4 +1,4 @@
-#include "lib/Odometry.h"
+#include "Odometry.h"
 #include "Constants.h"
 #include "lib/geometry/kinState.h"
 #include "pros/rtos.h"
@@ -29,26 +29,29 @@ void Odometry::updatePosition(void* params){
         prev_b = backWheel.get_position();
 
         double dh = (l_dist - r_dist) / (odometers::trackWidth);
-        double distance = (dh == 0) ? (l_dist + r_dist) / 2.0: ((l_dist + r_dist) / dh) * sin (dh / 2.0); //need to test this
+
         double perp_offset = b_dist + (odometers::backOffset * dh); //need to test this
 
-        double dx = distance + perp_offset * cos(curr_state.position.getTheta() + (M_PI / 2)) + perp_offset * sin(curr_state.position.getTheta() + (M_PI / 2)); //also need to test
+        double distance = (dh == 0) ? (l_dist + r_dist) / 2.0: ((l_dist + r_dist) / dh) * sin (dh / 2.0); //also need to test this
+
+        double dx = distance + perp_offset * cos(curr_state.position.getTheta() + (M_PI / 2)) + perp_offset * sin(curr_state.position.getTheta() + (M_PI / 2));
         double dy = distance * sin(curr_state.position.getTheta() + (M_PI / 2)) + perp_offset * cos(curr_state.position.getTheta() + (M_PI / 2));
         double dt = 20.0 / 1000.0;
 
-        odomMutex.take(TIMEOUT_MAX);
-        curr_state.setAcceleration((curr_state.velocity().x - (dx/dt))/dt, (curr_state.velocity().y - (dy/dt))/dt, (curr_state.velocity().theta - (dh/dt))/dt); /* need to test all these VVVVVV */
+        stateMutex.take(TIMEOUT_MAX);
+        curr_state.setAcceleration((curr_state.velocity().x - (dx/dt))/dt, (curr_state.velocity().y - (dy/dt))/dt, (curr_state.velocity().theta - (dh/dt))/dt);
         curr_state.setVelocity(dx/dt, dy/dt, dh/dt);
         curr_state.position.transformBy(dx, dy, dh);
-        odomMutex.give(); 
+        stateMutex.give(); 
 
         pros::c::task_delay_until(&time, 20);
     }
 }
 
-kinState Odometry::getMotion(){
-    odomMutex.take(TIMEOUT_MAX);
+kinState Odometry::getCurrentState(){
+    
+    stateMutex.take(TIMEOUT_MAX);
     kinState p = curr_state;
-    odomMutex.give();
+    stateMutex.give();
     return p;
 }

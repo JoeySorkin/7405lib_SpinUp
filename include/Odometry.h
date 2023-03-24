@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../main.h"
-#include "geometry/kinState.h"
+#include "lib/geometry/kinState.h"
+#include "main.h"
 
 #define sOdom Odometry::getInstance()
 

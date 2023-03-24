@@ -1,6 +1,8 @@
-#include "main.h"
 #include "Odometry.h"
-#include "Timeout.h"
+#include "lib/physics/Motion.h"
+#include "lib/utils/Timeout.h"
+#include "main.h"
+#include <atomic>
 #define sDrive Drive::getInstance()
 class Drive
 {
@@ -21,10 +23,10 @@ private:
     pros::motor_brake_mode_e_t getBrakeMode();
 
     // Thread Saftey
-    Motion getCurrentMotion(uint32_t timeout = TIMEOUT_MAX);
+    Motion* getCurrentMotion(uint32_t timeout = TIMEOUT_MAX);
     void giveCurrentMotion();
-    std::atomic<bool> isSettled;
-    std::atomic<bool> isTimedOut;
+    std::atomic<bool> isSettled = false;
+    std::atomic<bool> isTimedOut = false;
 
 public:
     static Drive *getInstance()
