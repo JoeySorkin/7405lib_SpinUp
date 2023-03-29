@@ -4,6 +4,6 @@
 #include "lib/physics/NullMotion.h"
 #include "lib/geometry/kinState.h"
 
-MotorVoltages NullMotion::calculateVoltages(kinState state) {
+Motion::MotorVoltages NullMotion::calculateVoltages(kinState state) {
     return {0.0,0.0};
 }

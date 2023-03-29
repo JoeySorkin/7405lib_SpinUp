@@ -1,5 +1,5 @@
 #include "lib/geometry/Pose.h"
-using namespace libM;
+#include <valarray>
 
 double Pose::getX() const { return _x; }
 double Pose::getY() const { return _y; }
@@ -28,7 +28,7 @@ Pose Pose::transformBy(Pose other) const {
 }
 
 Pose Pose::getTransformation(Pose &A, Pose &B){
-    { B._x - A._x, B._y - A._y, B._theta - A._theta; } // no return function??
+    return { B._x - A._x, B._y - A._y, B._theta - A._theta }; // no return function??
 }
 
 Pose Pose::scale(double scalar) const {

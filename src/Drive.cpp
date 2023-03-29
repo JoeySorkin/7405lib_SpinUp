@@ -14,34 +14,35 @@ void Drive::initialize()
 
 void Drive::runner(void *ignored)
 {
-    Motion* currentMotion =  new NullMotion();
     while (true)
     {
-        // get current motion
-        currentMotion = getCurrentMotion(200); // TODO: add thread overload error thingy
-
+        // get current motion (make sure we destruct the motion)
+//        Motion* currentMotion = getCurrentMotion(200); //
+       // TODO: add thread overload error thingy
+        currentMotionMutex.take(TIMEOUT_MAX);
         // get computed motor voltages
-        auto motor_volts =
+        auto motorVolts =
             currentMotion->calculateVoltages(sOdom->getCurrentState());
 
         // set those
-        setVoltageLeft(motor_volts.left);
-        setVoltageRight(motor_volts.right);
+        setVoltageLeft(motorVolts.left);
+        setVoltageRight(motorVolts.right);
 
         // check if motion has timed out (if it has, set current motion to nullmotion)
         if (isTimedOut)
         {
-            currentMotion = new NullMotion();
+          printf("TIMED OUT \n");
+            currentMotion = std::make_unique<NullMotion>();
             isTimedOut = false;
         }
-
+        currentMotionMutex.give();
         pros::delay(20);
     }
 }
 
 bool Drive::waitUntilSettled(uint32_t timeout)
 {
-    Timeout timer = Timeout(timeout);
+    auto timer = Timeout(timeout);
 
     while (!timer.timedOut())
     {
@@ -62,4 +63,21 @@ bool Drive::waitUntilSettled(uint32_t timeout)
     }
 
     return false;
+}
+
+void Drive::setCurrentMotion(std::unique_ptr<Motion> motion) {
+  currentMotionMutex.take(TIMEOUT_MAX);
+  //destruct old motion to stop memory leaks
+  currentMotion = std::move(motion);
+  currentMotionMutex.give();
+}
+void Drive::setVoltageRight(int16_t voltage) {
+  backRight.move(voltage);
+  frontRight.move(voltage);
+  middleRight.move(voltage);
+}
+void Drive::setVoltageLeft(int16_t voltage) {
+  backLeft.move(voltage);
+  frontLeft.move(voltage);
+  middleLeft.move(voltage);
 }

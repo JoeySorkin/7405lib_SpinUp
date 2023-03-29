@@ -1,10 +1,13 @@
 
 #include "Robot.h"
+#include "Drive.h"
 Robot *Robot::INSTANCE = nullptr;
 
 void Robot::initialize()
 {
     pros::lcd::initialize();
+    sDrive->initialize();
+    setOpMode(AUTONOMOUS);
 }
 
 void Robot::setOpMode(Robot::OpMode op)

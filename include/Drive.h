@@ -3,6 +3,8 @@
 #include "lib/utils/Timeout.h"
 #include "main.h"
 #include <atomic>
+#include <memory>
+
 #define sDrive Drive::getInstance()
 class Drive
 {
@@ -13,7 +15,7 @@ private:
     void runner(void *ignored);
 
     // Motors
-    pros::Motor frontLeft{ports::frontLeftMotor}, frontRight{ports::frontRightMotor}, middleLeft{ports::middleLeftMotor}, middleRight{ports::middleRightMotor}, backLeft{ports::backLeftMotor}, backRight{ports::backRightMotor};
+    pros::Motor frontLeft{ports::frontLeftMotor, true}, frontRight{ports::frontRightMotor, false}, middleLeft{ports::middleLeftMotor, false}, middleRight{ports::middleRightMotor, true}, backLeft{ports::backLeftMotor, true}, backRight{ports::backRightMotor, false};
 
     // Motor Control
     void setVoltageLeft(int16_t voltage);
@@ -22,11 +24,11 @@ private:
     void setBrakeMode(pros::motor_brake_mode_e_t breakmode);
     pros::motor_brake_mode_e_t getBrakeMode();
 
-    // Thread Saftey
-    Motion* getCurrentMotion(uint32_t timeout = TIMEOUT_MAX);
-    void giveCurrentMotion();
+    // thread safety
     std::atomic<bool> isSettled = false;
     std::atomic<bool> isTimedOut = false;
+    pros::Mutex currentMotionMutex;
+    std::unique_ptr<Motion> currentMotion;
 
 public:
     static Drive *getInstance()
@@ -38,6 +40,7 @@ public:
         return INSTANCE;
     }
     void initialize();
+    void setCurrentMotion(std::unique_ptr<Motion> motion);
 
     // Control
     /**

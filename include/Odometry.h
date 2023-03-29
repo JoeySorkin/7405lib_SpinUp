@@ -10,7 +10,7 @@ class Odometry
 private:
     pros::Rotation leftWheel, rightWheel, backWheel;
     pros::task_t odom_task;
-    pros::Mutex odomMutex;
+    pros::Mutex stateMutex;
 
     double prev_l, prev_r, prev_b;
 

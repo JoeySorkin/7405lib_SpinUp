@@ -1,5 +1,6 @@
 
 #include "main.h"
+#include <atomic>
 
 #define sRobot Robot::getInstance()
 class Robot
@@ -16,7 +17,7 @@ private:
     static Robot *INSTANCE;
     Robot() = default;
     // OpMode
-    std::atomic<OpMode> opmode;
+    std::atomic<OpMode> opmode = AUTONOMOUS;
 
 public:
     void initialize();
