@@ -5,6 +5,7 @@ Drive *Drive::INSTANCE = nullptr;
 
 void Drive::initialize()
 {
+  resetPosition();
     task = pros::c::task_create([](void *_)
                                 { sDrive->runner(_); },
                                 nullptr,
@@ -35,6 +36,8 @@ void Drive::runner(void *ignored)
             currentMotion = std::make_unique<NullMotion>();
             isTimedOut = false;
         }
+
+        // isSettled = TODO: IMPLMEMENT THIS
         currentMotionMutex.give();
         pros::delay(20);
     }
@@ -51,6 +54,7 @@ bool Drive::waitUntilSettled(uint32_t timeout)
             isSettled = false;
             return true;
         }
+        pros::delay(20);
     }
 
     // Timed out
@@ -71,13 +75,34 @@ void Drive::setCurrentMotion(std::unique_ptr<Motion> motion) {
   currentMotion = std::move(motion);
   currentMotionMutex.give();
 }
+
 void Drive::setVoltageRight(int16_t voltage) {
   backRight.move(voltage);
   frontRight.move(voltage);
   middleRight.move(voltage);
 }
+
 void Drive::setVoltageLeft(int16_t voltage) {
   backLeft.move(voltage);
   frontLeft.move(voltage);
   middleLeft.move(voltage);
+}
+
+double Drive::getLeftPosition(){
+  // return (middleLeft.get_position() + frontLeft.get_position() + backLeft.get_position()) / 3.0;
+  return middleLeft.get_position();
+}
+
+double Drive::getRightPosition(){
+  // return (middleRight.get_position() + frontRight.get_position() + backRight. get_position()) / 3.0;
+  return middleRight.get_position();
+}
+
+void Drive::resetPosition(){
+  backLeft.set_zero_position(0);
+  backRight.set_zero_position(0);
+  middleLeft.set_zero_position(0);
+  middleRight.set_zero_position(0);
+  frontLeft.set_zero_position(0);
+  frontRight.set_zero_position(0);
 }

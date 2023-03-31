@@ -7,3 +7,7 @@
 Motion::MotorVoltages NullMotion::calculateVoltages(kinState state) {
     return {0.0,0.0};
 }
+
+bool NullMotion::isSettled(kinState state){
+    return false;
+}

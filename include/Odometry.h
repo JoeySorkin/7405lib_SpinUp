@@ -2,6 +2,7 @@
 
 #include "lib/geometry/kinState.h"
 #include "main.h"
+#include "Drive.h"
 
 #define sOdom Odometry::getInstance()
 
@@ -19,6 +20,7 @@ private:
     static Odometry *INSTANCE;
 
     void updatePosition(void *params);
+    void printOdom();
 
 public:
     Odometry();

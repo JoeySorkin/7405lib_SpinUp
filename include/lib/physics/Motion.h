@@ -13,8 +13,10 @@ public:
   struct MotorVoltages {
     double left, right;
   };
+  Motion() = default;
   void start();
   virtual MotorVoltages calculateVoltages(kinState state) = 0;
+  virtual bool isSettled(kinState state) = 0;
 };
 
 #endif // INC_7405SPINUP_MOTION_H

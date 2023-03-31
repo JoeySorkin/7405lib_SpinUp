@@ -8,3 +8,7 @@
 Motion::MotorVoltages TimedMotion::calculateVoltages(kinState state) {
   return {2000.0,2000.0};
 }
+
+bool TimedMotion::isSettled(kinState state){
+  return false;
+}

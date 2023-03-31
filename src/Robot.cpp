@@ -5,8 +5,8 @@ Robot *Robot::INSTANCE = nullptr;
 
 void Robot::initialize()
 {
-    pros::lcd::initialize();
-    sDrive->initialize();
+    // sDrive->initialize();
+    sOdom->initialize();
     setOpMode(AUTONOMOUS);
 }
 

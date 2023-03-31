@@ -1,7 +1,11 @@
 #include "main.h"
 #include "Drive.h"
 #include "Robot.h"
+#include "lib/geometry/Pose.h"
+#include "lib/geometry/kinState.h"
 #include "lib/physics/TimedMotion.h"
+#include "pros/rtos.hpp"
+#include <cstdio>
 
 /**
  * A callback function for LLEMU's center button.
@@ -27,8 +31,7 @@ void on_center_button() {
  */
 void initialize() {
 	pros::lcd::initialize();
-        sRobot->initialize();
-
+    sRobot->initialize();
 	pros::lcd::register_btn1_cb(on_center_button);
 }
 
@@ -77,6 +80,5 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-  sDrive->setCurrentMotion(std::make_unique<TimedMotion>(/*args for ctor here*/));
-  pros::delay(20);
+	pros::delay(20);
 }

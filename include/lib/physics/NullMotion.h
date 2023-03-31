@@ -7,6 +7,7 @@
 #include "Motion.h"
 class NullMotion : public Motion {
   MotorVoltages calculateVoltages(kinState state) override;
+  bool isSettled(kinState state) override;
 };
 
 #endif // INC_7405SPINUP_NULLMOTION_H

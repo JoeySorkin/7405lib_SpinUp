@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Odometry.h"
 #include "lib/physics/Motion.h"
 #include "lib/utils/Timeout.h"
@@ -23,12 +25,12 @@ private:
 
     void setBrakeMode(pros::motor_brake_mode_e_t breakmode);
     pros::motor_brake_mode_e_t getBrakeMode();
-
     // thread safety
     std::atomic<bool> isSettled = false;
     std::atomic<bool> isTimedOut = false;
     pros::Mutex currentMotionMutex;
     std::unique_ptr<Motion> currentMotion;
+
 
 public:
     static Drive *getInstance()
@@ -41,6 +43,10 @@ public:
     }
     void initialize();
     void setCurrentMotion(std::unique_ptr<Motion> motion);
+
+    double getLeftPosition();
+    double getRightPosition();
+    void resetPosition();
 
     // Control
     /**
