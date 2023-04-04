@@ -177,15 +177,14 @@ std::string_view LogSource::levelToString(LogLevel level) {
 
 	using LogLevelType = std::underlying_type<LogLevel>::type;
 
-	// shifts down by 1 due to how enum starts counting from 1, not 0
-	auto const logLevel = static_cast<LogLevelType>(level) - 1;
+	int logLevel = std::sqrt(static_cast<LogLevelType>(level)) - 1;
 
 	if (logLevel > logLevelsMap.size() - 1) {
 		log(ERROR, pros::millis(),
 		    "Logger {} encountered an error in LogSource::levelToString. logLevel "
 		    "specified is not proper log level: "
 		    "{}",
-		    fmt::make_format_args(name, logLevel + 1));
+		    fmt::make_format_args(name, static_cast<LogLevelType>(level)));
 		return logLevelsMap.back();
 	}
 
@@ -208,16 +207,13 @@ const char* levelToColor(LogSource::LogLevel level) {
 }
 
 void LogSource::log(LogLevel level, uint32_t timestamp, std::string_view fmt, fmt::format_args args) {
-	// this printf might be better placed in Logger as that handles logging to all
-	// the outputs/handlers
-
 	std::string_view levelName = levelToString(level);
 	const char* levelColor = levelToColor(level);
 
 	if (outputSources & CONSOLE) {
 		// AHHHHHHHH! WE FORMAT TO ANOTHER FORMAT
-		std::string formatted = fmt::format("[{:.2F} {}{}{} {}{}{}] {}", timestamp / 1000.0, loggerColor, name, RESET,
-		                                    levelColor, levelName, RESET, fmt::vformat(fmt, args));
+		std::string formatted = fmt::format("[{:.2F} {}{}{}{} {}{}{}] {}", timestamp / 1000.0, BOLD BR_WHT, loggerColor,
+		                                    name, RESET, levelColor, levelName, RESET, fmt::vformat(fmt, args));
 
 		// allocates # of chars + 1 for \0
 		Message msg = {.timestamp = timestamp, .msg = new char[formatted.length() + 1], .len = formatted.length()};
@@ -236,7 +232,7 @@ void LogSource::log(LogLevel level, uint32_t timestamp, std::string_view fmt, fm
 		Message msg = {.timestamp = timestamp, .msg = new char[formatted.length() + 1], .len = formatted.length()};
 		strcpy(msg.msg, formatted.data());
 
-		pros::c::queue_append(mailboxConsole, &msg, timeout);
+		pros::c::queue_append(mailboxFile, &msg, timeout);
 	}
 }
 

@@ -7,8 +7,15 @@
 
 #include "Motion.h"
 class TimedMotion : public Motion {
-  MotorVoltages calculateVoltages(kinState state) override;
-  bool isSettled(kinState state) override;
+private:
+	int power;
+	uint32_t delay;
+
+public:
+	// time in ms, millivolts for both sides of drive to get
+	TimedMotion(uint32_t time, int mv);
+	MotorVoltages calculateVoltages(kinState state) override;
+	bool isSettled(kinState state) override;
 };
 
-#endif // INC_7405SPINUP_TIMEDMOTION_H
+#endif// INC_7405SPINUP_TIMEDMOTION_H

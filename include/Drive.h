@@ -11,6 +11,7 @@
 #define sDrive Drive::getInstance()
 class Drive {
 private:
+	Drive() = default;
 	void runner(void* ignored);
 
 	// Motors
@@ -41,8 +42,6 @@ public:
 	static Drive* getInstance() {
 		if (!INSTANCE) { INSTANCE = new Drive(); }
 
-		// im too lazy to create a constructor for drive so im putting it here
-		INSTANCE->logger = sLogger->createSource("Drive");
 		return INSTANCE;
 	}
 	void initialize();

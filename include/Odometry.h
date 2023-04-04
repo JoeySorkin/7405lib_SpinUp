@@ -17,16 +17,17 @@ private:
 
 	static Odometry* INSTANCE;
 
+	Odometry();
+
 	void updatePosition(void* params);
 	void printOdom();
 
 public:
-	Odometry();
-	kinState getCurrentState();
-	void initialize();
-
 	static Odometry* getInstance() {
 		if (!INSTANCE) { INSTANCE = new Odometry(); }
 		return INSTANCE;
 	}
+
+	kinState getCurrentState();
+	void initialize();
 };

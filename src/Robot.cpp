@@ -1,30 +1,28 @@
 
 #include "Robot.h"
 #include "Drive.h"
-Robot *Robot::INSTANCE = nullptr;
+#include "Logger.h"
+Robot* Robot::INSTANCE = nullptr;
 
-void Robot::initialize()
-{
-    // sDrive->initialize();
-    sOdom->initialize();
-    setOpMode(AUTONOMOUS);
+void Robot::initialize() {
+	sOdom->initialize();
+	sDrive->initialize();
+	sLogger->initialize("test.txt");
+	setOpMode(AUTONOMOUS);
 }
 
-void Robot::setOpMode(Robot::OpMode op)
-{
-    opmode.store(op);
-    switch (op)
-    {
-    case DRIVER:
-        // sDrive->setBrakeMode(MOTOR_BRAKE_COAST);
-        break;
-    case AUTONOMOUS:
-        // sDrive->setBrakeMode(MOTOR_BRAKE_HOLD);
-        break;
-    }
+void Robot::setOpMode(Robot::OpMode op) {
+	opmode.store(op);
+	switch (op) {
+		case DRIVER:
+			// sDrive->setBrakeMode(MOTOR_BRAKE_COAST);
+			break;
+		case AUTONOMOUS:
+			// sDrive->setBrakeMode(MOTOR_BRAKE_HOLD);
+			break;
+	}
 }
 
-Robot::OpMode Robot::getOpMode()
-{
-    return opmode.load();
+Robot::OpMode Robot::getOpMode() {
+	return opmode.load();
 }

@@ -5,5 +5,5 @@
 #include "lib/physics/Motion.h"
 
 void Motion::start() {
-  start_time = pros::millis();
+	if (start_time == 0) start_time = pros::millis();
 };

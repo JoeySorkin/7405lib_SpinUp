@@ -7,16 +7,17 @@
 #include "../../main.h"
 #include "lib/geometry/kinState.h"
 class Motion {
-  uint32_t start_time = 0;
+protected:
+	uint32_t start_time = 0;
 
 public:
-  struct MotorVoltages {
-    double left, right;
-  };
-  Motion() = default;
-  void start();
-  virtual MotorVoltages calculateVoltages(kinState state) = 0;
-  virtual bool isSettled(kinState state) = 0;
+	struct MotorVoltages {
+		double left, right;
+	};
+	Motion() = default;
+	void start();
+	virtual MotorVoltages calculateVoltages(kinState state) = 0;
+	virtual bool isSettled(kinState state) = 0;
 };
 
-#endif // INC_7405SPINUP_MOTION_H
+#endif// INC_7405SPINUP_MOTION_H

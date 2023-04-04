@@ -111,7 +111,7 @@ class LogSource {
 	friend class Logger;
 
 public:
-	enum LogLevel : uint8_t { DEBUG = 1, INFO = 2, WARNING = 4, ERROR = 8 };
+	enum LogLevel : uint8_t { DEBUG = 1, INFO = 4, WARNING = 8, ERROR = 16 };
 	enum Source : uint8_t { CONSOLE = 1, FILE = 2 };
 
 private:
@@ -198,9 +198,13 @@ public:
 		log(WARNING, pros::millis(), fmt, fmt::make_format_args(args...));
 	}
 
+	// DONT USE!
+	// causes program to hang entirely for some reason
+	// sometimes causes prefetch error and other times program just crashes somewhere
 	template<class... Args>
 	void error(std::string fmt, Args&&... args) {
 		if (!(logLevels & ERROR)) { return; }
 		log(ERROR, pros::millis(), fmt, fmt::make_format_args(args...));
+		// warning(fmt, std::forward<Args>(args)...);
 	}
 };

@@ -4,6 +4,8 @@
 Drive* Drive::INSTANCE = nullptr;
 
 void Drive::initialize() {
+	currentMotion = std::make_unique<NullMotion>();
+	INSTANCE->logger = sLogger->createSource("Drive");
 	resetPosition();
 	task = pros::c::task_create([](void* _) { sDrive->runner(_); }, nullptr, TASK_PRIORITY_DEFAULT,
 	                            TASK_STACK_DEPTH_DEFAULT, "Drive");
@@ -15,6 +17,18 @@ void Drive::runner(void* ignored) {
 		//        Motion* currentMotion = getCurrentMotion(200); //
 		// TODO: add thread overload error thingy
 		currentMotionMutex.take(TIMEOUT_MAX);
+
+		// TODO: change how motion.start() is handeled - idk how you guys want to do it so i just have a temp thing
+		currentMotion->start();
+
+		// check if motion has timed out (if it has, set current motion to nullmotion)
+		if (isTimedOut.load()) {
+			logger->info("TIMED OUT\n");
+
+			currentMotion = std::make_unique<NullMotion>();
+			isTimedOut.store(false);
+		}
+
 		// get computed motor voltages
 		auto motorVolts = currentMotion->calculateVoltages(sOdom->getCurrentState());
 
@@ -22,15 +36,8 @@ void Drive::runner(void* ignored) {
 		setVoltageLeft(motorVolts.left);
 		setVoltageRight(motorVolts.right);
 
-		// check if motion has timed out (if it has, set current motion to nullmotion)
-		if (isTimedOut) {
-			logger->info("TIMED OUT\n");
-			// printf("TIMED OUT \n");
-			currentMotion = std::make_unique<NullMotion>();
-			isTimedOut = false;
-		}
+		isSettled.store(currentMotion->isSettled(sOdom->getCurrentState()));
 
-		// isSettled = TODO: IMPLMEMENT THIS
 		currentMotionMutex.give();
 		pros::delay(20);
 	}
@@ -41,17 +48,18 @@ bool Drive::waitUntilSettled(uint32_t timeout) {
 
 	while (!timer.timedOut()) {
 		if (isSettled.load()) {
-			isSettled = false;
+			isSettled.store(false);
 			return true;
 		}
+
 		pros::delay(20);
 	}
 
 	// Timed out
-	isTimedOut = true;
+	isTimedOut.store(true);
 
 	// wait until the Drive thread realizes we timed out
-	while (isTimedOut) { pros::delay(20); }
+	while (isTimedOut.load()) { pros::delay(20); }
 
 	return false;
 }
@@ -64,15 +72,15 @@ void Drive::setCurrentMotion(std::unique_ptr<Motion> motion) {
 }
 
 void Drive::setVoltageRight(int16_t voltage) {
-	backRight.move(voltage);
-	frontRight.move(voltage);
-	middleRight.move(voltage);
+	backRight.move_voltage(voltage);
+	frontRight.move_voltage(voltage);
+	middleRight.move_voltage(voltage);
 }
 
 void Drive::setVoltageLeft(int16_t voltage) {
-	backLeft.move(voltage);
-	frontLeft.move(voltage);
-	middleLeft.move(voltage);
+	backLeft.move_voltage(voltage);
+	frontLeft.move_voltage(voltage);
+	middleLeft.move_voltage(voltage);
 }
 
 double Drive::getLeftPosition() {

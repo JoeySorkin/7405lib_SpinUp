@@ -62,7 +62,6 @@ void Odometry::updatePosition(void* params) {
 
 		printOdom();
 		stateMutex.give();
-
 		pros::c::task_delay_until(&time, 20);
 	}
 }

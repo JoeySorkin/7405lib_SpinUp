@@ -1,8 +1,11 @@
 #include "main.h"
 #include "Drive.h"
+#include "Logger.h"
 #include "Robot.h"
 #include "lib/geometry/Pose.h"
 #include "lib/geometry/kinState.h"
+#include "lib/physics/PIDMotion.h"
+#include "lib/physics/PIDTurn.h"
 #include "lib/physics/TimedMotion.h"
 #include "pros/rtos.hpp"
 #include <cstdio>
@@ -31,8 +34,7 @@ void on_center_button() {
  */
 void initialize() {
 	pros::lcd::initialize();
-    sRobot->initialize();
-	pros::lcd::register_btn1_cb(on_center_button);
+	sRobot->initialize();
 }
 
 /**
@@ -80,5 +82,29 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	pros::delay(20);
+	LoggerPtr logger = sLogger->createSource("OpControl");
+	// sDrive->setCurrentMotion(std::make_unique<PIDTurn>(90, PID(1.5, 0.01, 0.2, true, 10)));
+	// sDrive->waitUntilSettled();
+	// pros::lcd::print(6, "Movement done");
+
+	// with heading correction
+	sDrive->setCurrentMotion(std::make_unique<PIDMotion>(Pose(0, 12), PID(1.5, 0.01, 0.2, true, 10),
+	                                                     PID(1.5, 0.01, 0.2, true, 10), 0.5));
+	if (sDrive->waitUntilSettled()) {
+		logger->info("Done with movement\n");
+	} else {
+		logger->warning("Movement timed out\n");
+	}
+	pros::lcd::print(6, "Movement done");
+
+
+	int counter = 1;
+	// while (true) {
+	// 	// 	// printf("before calling logger->error\n");
+	// 	// 	// logger->info("Hello world! {}\n", counter++);
+	// 	logger->error("Hello world! {}\n", counter++);
+	// 	// 	// printf("%d\n", counter++);
+	// 	// 	// pros::lcd::print(6, "%d", counter++);
+	// 	pros::delay(20);
+	// }
 }

@@ -3,6 +3,12 @@
 #include <cmath>
 
 
+// !!!!!!!!!
+// Code has issue - profile takes in dist, but you past in target
+// - we have to calculate dist - but that requires knowing the pose of the robot at the start
+// to get the shortest angle we have to turn
+// but that also means we can only construct profile at the first time the motion is called
+// !!!!!!!!!
 ProfiledTurn::ProfiledTurn(double targetHeading, double omega, double alphaUp, double alphaDown, double threshold)
     : _targetHeading(targetHeading), _omega(omega), _alphaUp(alphaUp), _alphaDown(alphaDown), threshold(threshold),
       _profile(targetHeading, alphaUp, alphaDown, omega) {}
@@ -21,7 +27,7 @@ Motion::MotorVoltages ProfiledTurn::calculateVoltages(kinState state) {
 	double kA = 1, kDe = 1;// tunable constants
 
 	FF = (kV * targ_state.vel);
-	FF += (targ_state.vel > 0) ? (kA * targ_state.acc) : (kDe * targ_state.acc);
+	FF += (targ_state.acc > 0) ? (kA * targ_state.acc) : (kDe * targ_state.acc);
 
 	// calculate position PID
 	double posPID;
