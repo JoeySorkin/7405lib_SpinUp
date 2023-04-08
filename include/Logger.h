@@ -71,6 +71,10 @@ public:
 	 */
 	void initialize(std::string filename);
 
+	// literally just closes and reopens the file
+	// because vex
+	void flush();
+
 	/**
 	 * @brief Just closes the output file of the logger.
 	 * Depending on what we decide to do with handling closing the file, when the
@@ -193,7 +197,7 @@ public:
 	}
 
 	template<class... Args>
-	void warning(std::string fmt, Args&&... args) {
+	void warn(std::string fmt, Args&&... args) {
 		if (!(logLevels & WARNING)) { return; }
 		log(WARNING, pros::millis(), fmt, fmt::make_format_args(args...));
 	}

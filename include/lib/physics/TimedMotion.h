@@ -8,12 +8,12 @@
 #include "Motion.h"
 class TimedMotion : public Motion {
 private:
-	int power;
+	double power;
 	uint32_t delay;
 
 public:
-	// time in ms, millivolts for both sides of drive to get
-	TimedMotion(uint32_t time, int mv);
+	// time in ms, power in millivolts for both sides of drive to get
+	TimedMotion(uint32_t time, double power);
 	MotorVoltages calculateVoltages(kinState state) override;
 	bool isSettled(kinState state) override;
 };

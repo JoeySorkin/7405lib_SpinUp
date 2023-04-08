@@ -8,14 +8,14 @@
 #include "lib/geometry/kinState.h"
 class Motion {
 protected:
-	uint32_t start_time = 0;
+	uint32_t startTime = 0;
 
 public:
 	struct MotorVoltages {
 		double left, right;
 	};
 	Motion() = default;
-	void start();
+	virtual void start();
 	virtual MotorVoltages calculateVoltages(kinState state) = 0;
 	virtual bool isSettled(kinState state) = 0;
 };

@@ -1,13 +1,17 @@
 
 #include "Robot.h"
+#include "Controller.h"
 #include "Drive.h"
+#include "Intake.h"
 #include "Logger.h"
 Robot* Robot::INSTANCE = nullptr;
 
 void Robot::initialize() {
+	sLogger->initialize("test.txt");
+	sController->initialize();
 	sOdom->initialize();
 	sDrive->initialize();
-	sLogger->initialize("test.txt");
+	sIntake->initialize();
 	setOpMode(AUTONOMOUS);
 }
 

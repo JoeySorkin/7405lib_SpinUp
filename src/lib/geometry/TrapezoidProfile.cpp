@@ -30,8 +30,6 @@ TrapezoidProfile::TrapezoidProfile(double distance, double max_acceleration, dou
 
 // can get rid of these three functions and combine them into one func
 // and just have 4 branches
-
-// TODO: FIX IT - So we can move both in positive and negative directions
 double TrapezoidProfile::acceleration(double t) const {
 	if (t <= t_acc) {
 		return acc_max;
@@ -66,4 +64,12 @@ double TrapezoidProfile::position(double t) const {
 
 TrapezoidProfile::State TrapezoidProfile::getState(double t) const {
 	return {position(t) * direction, velocity(t) * direction, acceleration(t) * direction};
+}
+
+double TrapezoidProfile::getTargetDist() const {
+	return dist;
+}
+
+double TrapezoidProfile::getTotalTime() const {
+	return t_acc + t_coast + t_dec;
 }

@@ -19,5 +19,9 @@ private:
 public:
 	TrapezoidProfile(double distance, double max_acceleration, double max_deceleration, double max_velocity);
 
+	// time in seconds
 	State getState(double t) const;
+
+	double getTargetDist() const;
+	double getTotalTime() const;
 };

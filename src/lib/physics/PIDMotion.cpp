@@ -33,8 +33,8 @@ Motion::MotorVoltages PIDMotion::calculateVoltages(kinState state) {
 	} else if (headingCorrection) {
 		double totalPwr = pwr + trn;
 
-		double maxPwr = pwr * (127.0 / totalPwr);
-		double maxTrn = trn * (127.0 / totalPwr);
+		double maxPwr = pwr * (12000 / totalPwr);
+		double maxTrn = trn * (12000 / totalPwr);
 
 		pwr = pwr < maxPwr ? pwr : maxPwr;
 		trn = trn < maxTrn ? trn : maxTrn;

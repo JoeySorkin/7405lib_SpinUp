@@ -1,4 +1,5 @@
 #include "Drive.h"
+#include "Controller.h"
 #include "lib/physics/NullMotion.h"
 
 Drive* Drive::INSTANCE = nullptr;

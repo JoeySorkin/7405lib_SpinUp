@@ -139,6 +139,23 @@ void Logger::initialize(std::string filename) {
 	logFile = fopen(filename.c_str(), "w");
 }
 
+// still need to actually test
+void Logger::flush() {
+	if (logFile) {
+		fclose(logFile);
+		logFile = nullptr;
+	}
+
+	logFile = fopen(filename.c_str(), "a+");
+}
+
+void Logger::close() {
+	if (logFile) {
+		fclose(logFile);
+		logFile = nullptr;
+	}
+}
+
 void Logger::terminate() {
 	if (task) {
 		pros::c::task_delete(task);
@@ -154,7 +171,7 @@ void Logger::terminate() {
 std::shared_ptr<LogSource> Logger::createSource(std::string name, uint32_t timeout, const char* color) {
 	std::shared_ptr<LogSource> source = std::shared_ptr<LogSource>(new LogSource(name, timeout, color));
 
-	sources.insert({name, source});
+	sources.insert_or_assign(name, source);
 
 	return source;
 }

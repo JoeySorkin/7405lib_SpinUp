@@ -2,6 +2,7 @@
 
 #include "main.h"
 #include "pros/misc.hpp"
+#include "pros/rtos.hpp"
 #include <functional>
 #include <map>
 #include <utility>
@@ -18,14 +19,9 @@ public:
 private:
 	using DigitalFunc = std::function<void(void)>;
 
-	struct CallbackConfig {
-		ID id;
-		Digital button;
-		ButtonMode mode;
-	};
-
 	static Controller* INSTANCE;
 	pros::task_t task;
+	pros::Mutex mutex;
 
 	// stores callbacks - controller, which button, and on which action to call callback
 	std::map<std::tuple<ID, Digital, ButtonMode>, std::pair<DigitalFunc, DigitalFunc>> buttonBinds;
@@ -38,13 +34,9 @@ private:
 
 	void backend();
 
+	void callCallback(const std::pair<ID, Digital>& key, ButtonMode mode, bool callDefault = false);
+
 public:
-	// static std::reference_wrapper<Controller> getInstance() {
-	// 	if (!INSTANCE) { INSTANCE = new Controller(); }
-
-	// 	return std::reference_wrapper<Controller>(*INSTANCE);
-	// }
-
 	static Controller* getInstance() {
 		if (!INSTANCE) { INSTANCE = new Controller(); }
 
@@ -57,6 +49,6 @@ public:
 	                      ButtonMode mode);
 	bool removeCallback(ID id, Digital digital, ButtonMode mode);
 
-	[[nodiscard]] int32_t getDigital(Digital digital, ID id = master);
-	[[nodiscard]] int32_t getAnalog(Analog analog, ID id = master);
+	[[nodiscard]] int32_t getDigital(Digital digital, ID id = master) const;
+	[[nodiscard]] int32_t getAnalog(Analog analog, ID id = master) const;
 };

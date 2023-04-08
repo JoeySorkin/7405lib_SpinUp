@@ -15,8 +15,11 @@ Odometry::Odometry()
     : prev_b(0), prev_l(0), prev_r(0), leftWheel(ports::leftRotation), rightWheel(ports::rightRotation),
       backWheel(ports::backRotation) {
 	backWheel.reset_position();
+	backWheel.set_data_rate(5);
 	leftWheel.reset_position();
+	leftWheel.set_data_rate(5);
 	rightWheel.reset_position();
+	rightWheel.set_data_rate(5);
 }
 
 void Odometry::initialize() {
@@ -29,18 +32,48 @@ void Odometry::updatePosition(void* params) {
 	while (true) {
 		uint32_t time = pros::millis();
 
-		double l_dist = ((sDrive->getLeftPosition() - prev_l) / 360.0) * M_PI * odometers::leftDeadwheelDiameter;
-		double r_dist = ((sDrive->getRightPosition() - prev_r) / 360.0) * M_PI * odometers::rightDeadwheelDiameter;
-		double b_dist = ((backWheel.get_position() - prev_b) / 36000.0) * M_PI * odometers::backDeadwheelDiameter;
+		double l_dist;
+		double r_dist;
+		double b_dist;
+		double perp_offset;
 
-		prev_l = sDrive->getLeftPosition();
-		prev_r = sDrive->getRightPosition();
+		// if rotation sensor port is defined, then we use that to get dist traveled
+		// otherwise we use motor encoders
+		// Marked constexpr so it is a compile time thing
+		if constexpr (ports::leftRotation > 0) {
+			double LE = leftWheel.get_position();
+			l_dist = ((LE - prev_l) / 36000.0) * M_PI * odometers::leftDeadwheelDiameter;
+			prev_l = LE;
+		} else {
+			double LE = sDrive->getLeftPosition();
+			l_dist = ((LE - prev_l) / 360.0) * M_PI * odometers::leftDeadwheelDiameter;
+			prev_l = LE;
+		}
 
-		prev_b = backWheel.get_position();
+		if constexpr (ports::rightRotation > 0) {
+			double RE = rightWheel.get_position();
+			r_dist = ((RE - prev_r) / 36000.0) * M_PI * odometers::rightDeadwheelDiameter;
+			prev_r = RE;
+		} else {
+			double RE = sDrive->getRightPosition();
+			r_dist = ((RE - prev_r) / 360.0) * M_PI * odometers::rightDeadwheelDiameter;
+			prev_r = RE;
+		}
 
 		double dh = (l_dist - r_dist) / (odometers::trackWidth);
 
-		double perp_offset = b_dist + (odometers::backOffset * dh);// need to test this
+		if constexpr (ports::backRotation > 0) {
+			double BE = backWheel.get_position();
+			double b_dist = ((BE - prev_b) / 36000.0) * M_PI * odometers::backDeadwheelDiameter;
+			prev_b = BE;
+
+			perp_offset = b_dist + (odometers::backOffset * dh);// need to test this
+		} else {
+			b_dist = 0;
+			perp_offset = 0;
+		}
+
+		// idk why Kylan put this here but I'm keeping it here for now
 		perp_offset = 0;
 
 		double distance =
@@ -60,7 +93,8 @@ void Odometry::updatePosition(void* params) {
 		curr_state.position = {curr_state.position.getX() + dx, curr_state.position.getY() + dy,
 		                       curr_state.position.getTheta() + dh};
 
-		printOdom();
+		printOdom();// this don't need to be in mutex - or it wastes time that we could've released mutex for other
+		            // threads
 		stateMutex.give();
 		pros::c::task_delay_until(&time, 20);
 	}

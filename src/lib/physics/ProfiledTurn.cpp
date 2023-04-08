@@ -15,12 +15,14 @@ ProfiledTurn::ProfiledTurn(double targetHeading, double omega, double alphaUp, d
 
 Motion::MotorVoltages ProfiledTurn::calculateVoltages(kinState state) {
 	// set start time
-	if (_start_time == 0) { _start_time = pros::millis(); }
 	double turn;
 
 	// get profile
-	auto targ_state = _profile.getState(pros::millis() - _start_time);
+	auto targ_state = _profile.getState((pros::millis() - startTime) / 1000.0);
 
+	// !!!!!!!!!
+	// Change from normalized values to using mV
+	// !!!!!!!!!
 	// calculate feedforward
 	double FF;
 	double kV = (1 / chassis::maxOmega);
