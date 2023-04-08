@@ -18,6 +18,8 @@ private:
 	static Odometry* INSTANCE;
 
 	Odometry();
+	Odometry(const Odometry&) = delete;
+	Odometry& operator=(const Odometry&) = delete;
 
 	void updatePosition(void* params);
 	void printOdom();

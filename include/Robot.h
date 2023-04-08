@@ -3,36 +3,30 @@
 #include <atomic>
 
 #define sRobot Robot::getInstance()
-class Robot
-{
+class Robot {
 public:
-    enum OpMode
-    {
-        DRIVER,
-        AUTONOMOUS
-    };
+	enum OpMode { DRIVER, AUTONOMOUS };
 
 private:
-    // Singleton Stuff
-    static Robot *INSTANCE;
-    Robot() = default;
-    // OpMode
-    std::atomic<OpMode> opmode = AUTONOMOUS;
+	// Singleton Stuff
+	static Robot* INSTANCE;
+	Robot() = default;
+	Robot(const Robot&) = delete;
+	Robot& operator=(const Robot&) = delete;
+
+	// OpMode
+	std::atomic<OpMode> opmode = AUTONOMOUS;
 
 public:
-    void initialize();
+	void initialize();
 
-    //  OpMode
-    OpMode getOpMode();
-    void setOpMode(OpMode op_mode);
+	//  OpMode
+	OpMode getOpMode();
+	void setOpMode(OpMode op_mode);
 
-    // Singleton Stuff
-    static Robot *getInstance()
-    {
-        if (!INSTANCE)
-        {
-            INSTANCE = new Robot();
-        }
-        return INSTANCE;
-    }
+	// Singleton Stuff
+	static Robot* getInstance() {
+		if (!INSTANCE) { INSTANCE = new Robot(); }
+		return INSTANCE;
+	}
 };

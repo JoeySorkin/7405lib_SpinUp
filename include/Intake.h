@@ -10,6 +10,8 @@ private:
 	pros::Motor_Group motors;
 
 	Intake();
+	Intake(const Intake&) = delete;
+	Intake& operator=(const Intake&) = delete;
 
 public:
 	static Intake* getInstance() {

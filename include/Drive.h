@@ -12,6 +12,9 @@
 class Drive {
 private:
 	Drive() = default;
+	Drive(const Drive&) = delete;
+	Drive& operator=(const Drive&) = delete;
+
 	void runner(void* ignored);
 
 	// Motors

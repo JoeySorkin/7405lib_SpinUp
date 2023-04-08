@@ -46,6 +46,8 @@ private:
 	std::unordered_map<std::string, std::shared_ptr<LogSource>> sources;
 
 	Logger();
+	Logger(const Logger&) = delete;
+	Logger& operator=(const Logger&) = delete;
 
 	// thread that runs in backend, logging to file/handler
 	void backend();
@@ -209,6 +211,5 @@ public:
 	void error(std::string fmt, Args&&... args) {
 		if (!(logLevels & ERROR)) { return; }
 		log(ERROR, pros::millis(), fmt, fmt::make_format_args(args...));
-		// warning(fmt, std::forward<Args>(args)...);
 	}
 };

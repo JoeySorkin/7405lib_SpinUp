@@ -31,6 +31,8 @@ private:
 	std::map<std::pair<ID, Digital>, std::pair<bool, bool>> buttonStates;
 
 	Controller();
+	Controller(const Controller&) = delete;
+	Controller& operator=(const Controller&) = delete;
 
 	void backend();
 
