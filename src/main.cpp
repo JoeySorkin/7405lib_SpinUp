@@ -5,6 +5,7 @@
 #include "lib/geometry/Pose.h"
 #include "lib/geometry/kinState.h"
 #include "lib/physics/NullMotion.h"
+#include "lib/physics/OpControlMotion.h"
 #include "lib/physics/PIDMotion.h"
 #include "lib/physics/PIDTurn.h"
 #include "lib/physics/ProfiledMotion.h"
@@ -78,6 +79,7 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	sDrive->setCurrentMotion(std::make_unique<OpControlMotion>());
 	LoggerPtr logger = sLogger->createSource("OpControl");
 	// sDrive->setCurrentMotion(std::make_unique<PIDTurn>(90, PID(1.5, 0.01, 0.2, true, 10)));
 
@@ -92,11 +94,11 @@ void opcontrol() {
 	// } else {
 	// 	logger->warn("Movement timed out\n");
 	// }
-	sDrive->setCurrentMotion(std::make_unique<NullMotion>());
-	pros::lcd::print(6, "Movement done");
+	// sDrive->setCurrentMotion(std::make_unique<NullMotion>());
+	// pros::lcd::print(6, "Movement done");
 
-	while (true) {
-		logger->info("OPCONTROL LOOP\n");
-		pros::delay(100);
-	}
+	// while (true) {
+	// 	logger->info("OPCONTROL LOOP\n");
+	// 	pros::delay(100);
+	// }
 }

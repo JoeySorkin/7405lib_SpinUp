@@ -117,7 +117,7 @@ class LogSource {
 	friend class Logger;
 
 public:
-	enum LogLevel : uint8_t { DEBUG = 1, INFO = 4, WARNING = 8, ERROR = 16 };
+	enum LogLevel : uint8_t { DEBUG = 1, INFO = 2, WARNING = 4, ERROR = 8 };
 	enum Source : uint8_t { CONSOLE = 1, FILE = 2 };
 
 private:

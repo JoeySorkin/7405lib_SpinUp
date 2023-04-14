@@ -1,11 +1,14 @@
 #include "Drive.h"
 #include "Controller.h"
+#include "lib/physics/MaxAccMotion.h"
 #include "lib/physics/NullMotion.h"
+#include "pros/rtos.hpp"
 
 Drive* Drive::INSTANCE = nullptr;
 
 void Drive::initialize() {
 	currentMotion = std::make_unique<NullMotion>();
+	// currentMotion = std::make_unique<MaxAccMotion>();
 	INSTANCE->logger = sLogger->createSource("Drive");
 	resetPosition();
 	task = pros::c::task_create([](void* _) { sDrive->runner(_); }, nullptr, TASK_PRIORITY_DEFAULT,
@@ -13,6 +16,7 @@ void Drive::initialize() {
 }
 
 void Drive::runner(void* ignored) {
+	// uint32_t startTime = pros::micros();
 	while (true) {
 		// get current motion (make sure we destruct the motion)
 		//        Motion* currentMotion = getCurrentMotion(200); //
@@ -38,6 +42,16 @@ void Drive::runner(void* ignored) {
 		setVoltageRight(motorVolts.right);
 
 		isSettled.store(currentMotion->isSettled(sOdom->getCurrentState()));
+
+		// double driveVoltage = (backLeft.get_voltage() + middleLeft.get_voltage() + frontLeft.get_voltage() +
+		//    backRight.get_voltage() + middleRight.get_voltage() + frontRight.get_voltage()) /
+		//   6.0 / 1000.0;
+
+		// auto state = sOdom->getCurrentState();
+		// double timestamp = (pros::micros() - startTime) / 1000.0 / 1000.0;
+
+		// timestamp (s), voltage (V), vel (in/S), acc (in/S^2)
+		// printf("%f,%f,%f,%f\n", timestamp, driveVoltage, state.velocity().y, state.acceleration().y);
 
 		currentMotionMutex.give();
 		pros::delay(20);

@@ -20,7 +20,11 @@ Odometry::Odometry()
 	leftWheel.set_data_rate(5);
 	rightWheel.reset_position();
 	rightWheel.set_data_rate(5);
+#ifdef TEAM_K
+	rightWheel.reverse();
+#endif
 }
+
 
 void Odometry::initialize() {
 	curr_state = kinState({0, 0, 0}, {0, 0, 0}, {0, 0, 0});

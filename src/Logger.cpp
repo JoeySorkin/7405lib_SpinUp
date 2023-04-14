@@ -193,8 +193,8 @@ std::string_view LogSource::levelToString(LogLevel level) {
 	static constexpr std::array<std::string_view, 5> logLevelsMap = {"DEBUG", "INFO", "WARNING", "ERROR", "UNKNOWN"};
 
 	using LogLevelType = std::underlying_type<LogLevel>::type;
-
-	int logLevel = std::sqrt(static_cast<LogLevelType>(level)) - 1;
+	// check that this actually works correctly and im not stupid
+	int logLevel = 32 - __builtin_clz(static_cast<int>(level));
 
 	if (logLevel > logLevelsMap.size() - 1) {
 		log(ERROR, pros::millis(),

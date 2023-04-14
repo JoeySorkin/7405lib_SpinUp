@@ -17,7 +17,7 @@ void Intake::initialize() {
 		                              // this needs to be done because otherwise the r1's callback's moveVoltage will be
 		                              // overridden and it is in this callback because r2's callback will always be
 		                              // called after r1
-		                              if (motors[0].get_power() < 0) { moveVoltage(0); }
+		                              if (motors.at(0).get_power() < 0) { moveVoltage(0); }
 	                              },
 	                              Controller::master, Controller::r2, Controller::hold);
 }
