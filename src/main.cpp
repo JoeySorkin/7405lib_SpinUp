@@ -10,6 +10,7 @@
 #include "lib/physics/PIDTurn.h"
 #include "lib/physics/ProfiledMotion.h"
 #include "lib/physics/TimedMotion.h"
+#include "pros/motors.h"
 #include "pros/rtos.hpp"
 #include <cstdio>
 
@@ -57,6 +58,7 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
+	sDrive->setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
 	LoggerPtr logger = sLogger->createSource("AUTONOMOUS");
 
 	while (true) {
@@ -79,6 +81,7 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	sDrive->setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
 	sDrive->setCurrentMotion(std::make_unique<OpControlMotion>());
 	LoggerPtr logger = sLogger->createSource("OpControl");
 	// sDrive->setCurrentMotion(std::make_unique<PIDTurn>(90, PID(1.5, 0.01, 0.2, true, 10)));
@@ -87,7 +90,6 @@ void opcontrol() {
 	// sDrive->setCurrentMotion(std::make_unique<PIDMotion>(Pose(0, 12), PID(1.5, 0.01, 0.2, true, 10),
 	//                                                      PID(1.5, 0.01, 0.2, true, 10), 0.5));
 
-	// sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(24, 24, 30, 30, 0.55));
 	// sDrive->setCurrentMotion(std::make_unique<TimedMotion>(750, 4000));
 	// if (sDrive->waitUntilSettled(4000)) {
 	// 	logger->info("Done with movement\n");
@@ -96,6 +98,14 @@ void opcontrol() {
 	// }
 	// sDrive->setCurrentMotion(std::make_unique<NullMotion>());
 	// pros::lcd::print(6, "Movement done");
+
+
+	// tuning profiled motions
+	sDrive->setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
+	// sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(70, 50, 60, 60, 0.1));
+	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(70, 50, 60, 60, 0.1));
+	sDrive->waitUntilSettled(10000);
+	sDrive->setCurrentMotion(std::make_unique<NullMotion>());
 
 	// while (true) {
 	// 	logger->info("OPCONTROL LOOP\n");

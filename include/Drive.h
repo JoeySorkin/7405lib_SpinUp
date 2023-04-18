@@ -5,6 +5,7 @@
 #include "lib/physics/Motion.h"
 #include "lib/utils/Timeout.h"
 #include "main.h"
+#include "pros/motors.h"
 #include <atomic>
 #include <memory>
 
@@ -25,9 +26,6 @@ private:
 	// Motor Control
 	void setVoltageLeft(int16_t voltage);
 	void setVoltageRight(int16_t voltage);
-
-	void setBrakeMode(pros::motor_brake_mode_e_t breakmode);
-	pros::motor_brake_mode_e_t getBrakeMode();
 
 	// General Stuff
 	static Drive* INSTANCE;
@@ -53,6 +51,9 @@ public:
 	double getLeftPosition();
 	double getRightPosition();
 	void resetPosition();
+
+	void setBrakeMode(pros::motor_brake_mode_e_t mode);
+	pros::motor_brake_mode_e_t getBrakeMode();
 
 	// Control
 	/**

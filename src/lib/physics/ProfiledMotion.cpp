@@ -2,19 +2,19 @@
 #include "Constants.h"
 #include "Logger.h"
 #include "Odometry.h"
-#include "lib/controllers/PID.h"
+#include "lib/utils/Math.h"
 
 LoggerPtr ProfiledMotion::logger = sLogger->createSource("ProfiledMotion", 0);
 
 ProfiledMotion::ProfiledMotion(double dist, double maxVel, double accel, double decel, double threshold)
-    : threshold(threshold), startPose(), profile(dist, accel, decel, maxVel) {
+    : threshold(threshold), errorSum(0), startPose(), profile(dist, accel, decel, maxVel), prevSign(dist >= 0) {
 	// toggles whether or not debug info from this motion is logged
 	// logger->setLevel(static_cast<LogSource::LogLevel>(LogSource::INFO | LogSource::WARNING | LogSource::ERROR));
 }
 
 void ProfiledMotion::start() {
 	if (startTime == 0) {
-		logger->debug("Motion start\n");
+		logger->debug("Motion start. Total Time: {}\n", profile.getTotalTime());
 		startPose = sOdom->getCurrentState().position;
 		Motion::start();
 	}
@@ -25,27 +25,64 @@ Motion::MotorVoltages ProfiledMotion::calculateVoltages(kinState state) {
 	auto targetState = profile.getState(time);
 
 	// random values - and the divsor is inches/S or inches/S^2
-	constexpr double kV = 12000 / 60.0;
-	constexpr double kA = 12000 / 90.0;
-	constexpr double kDe = 12000 / 90.0;
-	PID posPID = PID(0, 0, 0);
+	// constexpr double kV = 12000 / chassis::maxVel;
+	// constexpr double kV = 157.135;
+	// constexpr double kV = 12000 / 67.0;
+	// constexpr double kA = 70.7333777722;
+	// constexpr double kA = 52.5;
+	// constexpr double kDe = 42.73;
+	// constexpr double kDe = 49.73;
 
-	double FF = kV * targetState.vel;
-	FF += targetState.acc > 0 ? kA * targetState.acc : kDe * targetState.acc;
+	constexpr double kSLeft = 1065.65839038;
+	constexpr double kVLeft = 146.4539999079319;
+	// constexpr double kALeft = 24.450363464220203;
+	// constexpr double kALeft = 35.450363464220203;// worked at 20 inches well
+	constexpr double kALeft =
+	        37.450363464220203;// works well for all distances when max vel is 50, max accel and max decel are 60
+	constexpr double kDeLeft = kALeft;
 
-	double distTraveled = sOdom->getCurrentState().position.distanceTo(startPose);
+	constexpr double kSRight = 835.517;
+	constexpr double kVRight = 157.135;
+	constexpr double kARight = 35.3875;
+	constexpr double kDeRight = kARight;
+
+	int sign = util::sign(targetState.vel);
+	if (util::fpEquality(targetState.vel, 0.0)) { sign = 0; }
+
+	double FFLeft = kVLeft * targetState.vel + sign * kSLeft;
+	FFLeft += targetState.acc > 0 ? kALeft * targetState.acc : kDeLeft * targetState.acc;
+
+	double FFRight = kVLeft * targetState.vel + sign * kSRight;
+	FFRight += targetState.acc > 0 ? kARight * targetState.acc : kDeRight * targetState.acc;
+
+	auto curState = sOdom->getCurrentState();
+	double distTraveled = curState.position.distanceTo(startPose);
 	double error = -1 * (distTraveled - targetState.pos);
-	double fbPwr = posPID(error);
 
-	double power = FF + fbPwr;
+	// kP: 1000
+	// kI: something
+	// double fbPwr = 0;
+	double fbPwr = error * 750;
+	// double fbPwr = error > 0 ? error * 500 : error * 250;
+	if (std::abs(profile.getTargetDist() - distTraveled) < 2) { errorSum += error; }
+	if (util::sign(error) != prevSign) {
+		errorSum = 0;
+		prevSign = util::sign(error);
+	}
 
-	logger->debug(
-	        "TIME: {} State: pos: {} vel: {:.2f} acc: {:.2f} err: {:.2f} dist traveled: {:.2f} ff: {:.2f} fb: {:.2f} "
-	        "total pwr: {:.2f} "
-	        "\n",
-	        time, targetState.pos, targetState.vel, targetState.acc, error, distTraveled, FF, fbPwr, power);
+	fbPwr += errorSum * 250;
 
-	return {power, power};
+	double leftPwr = FFLeft + fbPwr;
+	double rightPwr = FFRight + fbPwr;
+
+	logger->debug("TIME: {} tpos: {:.2f} tvel: {:.2f} cvel: {:.2f} tacc: {:.2f} err: {:.2f} dist traveled: {:.2f} "
+	              "ff: {:.2f} fb: {:.2f} "
+	              "total pwr: {:.2f} curHeading: {}"
+	              "\n",
+	              time, targetState.pos, targetState.vel, curState.velocity().y, targetState.acc, error, distTraveled,
+	              FFLeft, fbPwr, leftPwr, curState.position.getTheta() / M_PI * 180);
+
+	return {leftPwr, rightPwr};
 }
 
 bool ProfiledMotion::isSettled(kinState state) {

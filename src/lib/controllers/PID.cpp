@@ -1,6 +1,7 @@
 #include "lib/controllers/PID.h"
 #include "lib/utils/Math.h"
 #include <cmath>
+#include <cstdio>
 
 
 PID::PID() : kP(0), kI(0), kD(0), iBound(0), prevError(0), errorSum(0), resetFlag(false), errorZeroFlip(false) {}

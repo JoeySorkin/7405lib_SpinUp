@@ -12,6 +12,8 @@ private:
 	pros::Mutex stateMutex;
 
 	double prev_l, prev_r, prev_b;
+	double curL, curR;
+	double leftVel, rightVel;
 
 	kinState curr_state;
 
@@ -22,7 +24,7 @@ private:
 	Odometry& operator=(const Odometry&) = delete;
 
 	void updatePosition(void* params);
-	void printOdom();
+	void printOdom(kinState state);
 
 public:
 	static Odometry* getInstance() {
@@ -31,5 +33,9 @@ public:
 	}
 
 	kinState getCurrentState();
+	double getLeftVel();
+	double getLeftPos();
+	double getRightVel();
+	double getRightPos();
 	void initialize();
 };

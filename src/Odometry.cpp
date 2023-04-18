@@ -1,6 +1,7 @@
 #include "Odometry.h"
 #include "Constants.h"
 #include "Drive.h"
+#include "lib/geometry/Pose.h"
 #include "lib/geometry/kinState.h"
 #include "pros/rtos.h"
 #include <cmath>
@@ -46,6 +47,7 @@ void Odometry::updatePosition(void* params) {
 		// Marked constexpr so it is a compile time thing
 		if constexpr (ports::leftRotation > 0) {
 			double LE = leftWheel.get_position();
+			curL = LE / 36000.0 * M_PI * odometers::leftDeadwheelDiameter;
 			l_dist = ((LE - prev_l) / 36000.0) * M_PI * odometers::leftDeadwheelDiameter;
 			prev_l = LE;
 		} else {
@@ -56,6 +58,7 @@ void Odometry::updatePosition(void* params) {
 
 		if constexpr (ports::rightRotation > 0) {
 			double RE = rightWheel.get_position();
+			curR = RE / 36000.0 * M_PI * odometers::leftDeadwheelDiameter;
 			r_dist = ((RE - prev_r) / 36000.0) * M_PI * odometers::rightDeadwheelDiameter;
 			prev_r = RE;
 		} else {
@@ -68,7 +71,7 @@ void Odometry::updatePosition(void* params) {
 
 		if constexpr (ports::backRotation > 0) {
 			double BE = backWheel.get_position();
-			double b_dist = ((BE - prev_b) / 36000.0) * M_PI * odometers::backDeadwheelDiameter;
+			b_dist = ((BE - prev_b) / 36000.0) * M_PI * odometers::backDeadwheelDiameter;
 			prev_b = BE;
 
 			perp_offset = b_dist + (odometers::backOffset * dh);// need to test this
@@ -94,20 +97,43 @@ void Odometry::updatePosition(void* params) {
 		                           (curr_state.velocity().y - (dy / dt)) / dt,
 		                           (curr_state.velocity().theta - (dh / dt)) / dt);
 		curr_state.setVelocity(dx / dt, dy / dt, dh / dt);
+
+		Pose prevPose = curr_state.position;
+
 		curr_state.position = {curr_state.position.getX() + dx, curr_state.position.getY() + dy,
 		                       curr_state.position.getTheta() + dh};
 
-		printOdom();// this don't need to be in mutex - or it wastes time that we could've released mutex for other
-		            // threads
+		leftVel = l_dist / dt;
+		rightVel = r_dist / dt;
+
+		kinState state = curr_state;
 		stateMutex.give();
+		printOdom(state);// this don't need to be in mutex - or it wastes time that we could've released mutex for other
+		                 // threads
 		pros::c::task_delay_until(&time, 20);
 	}
 }
 
-void Odometry::printOdom() {
-	pros::lcd::set_text(1, "gH: " + std::to_string((180 / M_PI) * curr_state.position.getTheta()));
-	pros::lcd::set_text(2, "gX: " + std::to_string(curr_state.position.getX()));
-	pros::lcd::set_text(3, "gY: " + std::to_string(curr_state.position.getY()));
+double Odometry::getLeftVel() {
+	return leftVel;
+}
+
+double Odometry::getLeftPos() {
+	return curL;
+}
+
+double Odometry::getRightVel() {
+	return rightVel;
+}
+
+double Odometry::getRightPos() {
+	return curR;
+}
+
+void Odometry::printOdom(kinState state) {
+	pros::lcd::set_text(1, "gH: " + std::to_string((180 / M_PI) * state.position.getTheta()));
+	pros::lcd::set_text(2, "gX: " + std::to_string(state.position.getX()));
+	pros::lcd::set_text(3, "gY: " + std::to_string(state.position.getY()));
 }
 
 kinState Odometry::getCurrentState() {

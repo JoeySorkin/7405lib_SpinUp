@@ -20,9 +20,6 @@ Motion::MotorVoltages ProfiledTurn::calculateVoltages(kinState state) {
 	// get profile
 	auto targ_state = _profile.getState((pros::millis() - startTime) / 1000.0);
 
-	// !!!!!!!!!
-	// Change from normalized values to using mV
-	// !!!!!!!!!
 	// calculate feedforward
 	double FF;
 	double kV = (1 / chassis::maxOmega);

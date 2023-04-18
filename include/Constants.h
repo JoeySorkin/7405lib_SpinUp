@@ -50,7 +50,7 @@ namespace ports {
 	constexpr int flywheelMotor = 5;
 
 	// numbers indicate ports, negative numbers indicate reversed motors
-	constexpr std::initializer_list<std::int8_t> intake = {20};// determine if we reverese it or not later
+	constexpr std::initializer_list<std::int8_t> intake = {-20};// determine if we reverese it or not later
 
 	constexpr int leftRotation = 6;
 	constexpr int rightRotation = 19;
@@ -67,9 +67,11 @@ namespace odometers {
 }// namespace odometers
 
 namespace chassis {
+	// maybe try like 66 in/S for vel
 	constexpr double maxVel = 64.7953484803;// in/S
-	constexpr double accel = 1;             // in/S^2 // ((10841.33-(12000/64.7953484803*51.647802)))//92.929477
-	constexpr double deccel = 1;            // in/S^2
+	// guessing these vals
+	constexpr double accel = 200; // in/S^2
+	constexpr double deccel = 300;// in/S^2
 
 	constexpr double maxOmega = 1;
 	constexpr double maxAlphaUp = 1;

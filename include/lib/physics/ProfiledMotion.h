@@ -2,14 +2,17 @@
 #include "Constants.h"
 #include "Logger.h"
 #include "Motion.h"
+#include "lib/controllers/PID.h"
 #include "lib/geometry/Pose.h"
 #include "lib/geometry/TrapezoidProfile.h"
 
 class ProfiledMotion : public Motion {
 private:
 	double threshold;
+	double errorSum;
 	Pose startPose;
 	TrapezoidProfile profile;
+	int prevSign;
 
 	static LoggerPtr logger;
 

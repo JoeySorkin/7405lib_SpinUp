@@ -18,12 +18,8 @@ void Drive::initialize() {
 void Drive::runner(void* ignored) {
 	// uint32_t startTime = pros::micros();
 	while (true) {
-		// get current motion (make sure we destruct the motion)
-		//        Motion* currentMotion = getCurrentMotion(200); //
-		// TODO: add thread overload error thingy
 		currentMotionMutex.take(TIMEOUT_MAX);
 
-		// TODO: change how motion.start() is handeled - idk how you guys want to do it so i just have a temp thing
 		currentMotion->start();
 
 		// check if motion has timed out (if it has, set current motion to nullmotion)
@@ -37,21 +33,31 @@ void Drive::runner(void* ignored) {
 		// get computed motor voltages
 		auto motorVolts = currentMotion->calculateVoltages(sOdom->getCurrentState());
 
-		// set those
 		setVoltageLeft(motorVolts.left);
 		setVoltageRight(motorVolts.right);
 
 		isSettled.store(currentMotion->isSettled(sOdom->getCurrentState()));
 
 		// double driveVoltage = (backLeft.get_voltage() + middleLeft.get_voltage() + frontLeft.get_voltage() +
-		//    backRight.get_voltage() + middleRight.get_voltage() + frontRight.get_voltage()) /
-		//   6.0 / 1000.0;
+		//                        backRight.get_voltage() + middleRight.get_voltage() + frontRight.get_voltage()) /
+		//                       6.0 / 1000.0;
 
 		// auto state = sOdom->getCurrentState();
-		// double timestamp = (pros::micros() - startTime) / 1000.0 / 1000.0;
+		// double vel = sOdom->getVelocity();
+		// double leftVol = (backLeft.get_voltage() + middleLeft.get_voltage() + frontLeft.get_voltage()) / 3.0;
+		// double rightVol = (backRight.get_voltage() + middleRight.get_voltage() + frontRight.get_voltage()) / 3.0;
+		// double lVel = sOdom->getLeftVel();
+		// double lPos = sOdom->getLeftPos();
+		// double rVel = sOdom->getRightVel();
+		// double rPos = sOdom->getRightPos();
+		// double timestamp = (pros::micros() - startTime) / 1000.0;// in mS
 
-		// timestamp (s), voltage (V), vel (in/S), acc (in/S^2)
+		// timestamp (ms), voltage (V), vel (in/S)
 		// printf("%f,%f,%f,%f\n", timestamp, driveVoltage, state.velocity().y, state.acceleration().y);
+
+		// timestamp (ms), leftVoltage (mV), left vel (in/S), left pos (inches), right vol (mv), right vel (in/S), right
+		// pos (inches)
+		// printf("%f,%f,%f,%f,%f,%f,%f\n", timestamp, leftVol, lVel, lPos, rightVol, rVel, rPos);
 
 		currentMotionMutex.give();
 		pros::delay(20);
@@ -115,4 +121,13 @@ void Drive::resetPosition() {
 	middleRight.set_zero_position(0);
 	frontLeft.set_zero_position(0);
 	frontRight.set_zero_position(0);
+}
+
+void Drive::setBrakeMode(pros::motor_brake_mode_e_t mode) {
+	backLeft.set_brake_mode(mode);
+	middleLeft.set_brake_mode(mode);
+	frontLeft.set_brake_mode(mode);
+	backRight.set_brake_mode(mode);
+	middleRight.set_brake_mode(mode);
+	frontRight.set_brake_mode(mode);
 }
