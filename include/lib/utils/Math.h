@@ -3,6 +3,29 @@
 #include <numbers>
 
 namespace util {
+	template<typename T>
+	/**
+	 * @tparam T a numerical type
+	 * @param min lowest value you want to return
+	 * @param max highest value you want to return
+	 * @param curr the value you want to clamp
+	 * @return curr if curr is between min and max, otherwise it returns min or max
+	 */
+	static T clamp(T min, T max, T curr) {
+		if (curr > max) {
+			return max;
+		} else if (curr < min) {
+			return min;
+		} else {
+			return curr;
+		}
+	}
+
+	static double lerp(double a, double b, double t) {
+		return a + (b - a) * t;
+	}
+
+
 	template<class T>
 	T normalize(T val, T range) {
 		return std::fmod((std::fmod(val, range) + range), range);

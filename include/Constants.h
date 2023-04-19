@@ -53,7 +53,7 @@ namespace ports {
 	constexpr std::initializer_list<std::int8_t> intake = {-20};// determine if we reverese it or not later
 
 	constexpr int leftRotation = 6;
-	constexpr int rightRotation = 19;
+	constexpr int rightRotation = 18;
 	constexpr int backRotation = 0;
 }// namespace ports
 

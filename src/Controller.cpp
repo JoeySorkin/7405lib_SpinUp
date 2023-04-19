@@ -30,7 +30,7 @@ void Controller::backend() {
 
 		// poll for the new controller states
 		// and call corresponding callbacks when the conditions for a callback is met
-		if (!pros::competition::is_autonomous() && !pros::competition::is_disabled()) {
+		if (pros::competition::is_autonomous() || pros::competition::is_disabled()) {
 			pros::delay(20);
 			continue;
 		}

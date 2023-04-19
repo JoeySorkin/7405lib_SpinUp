@@ -63,6 +63,20 @@ double TrapezoidProfile::position(double t) const {
 }
 
 TrapezoidProfile::State TrapezoidProfile::getState(double t) const {
+	// State state{0};
+	// if (t <= t_acc) {
+	// 	state.acc = acc_max;
+	// 	state.vel = acc_max * t;
+	// 	state.pos = (0.5 * acc_max * t) * t;
+	// } else if (t <= (t_acc + t_coast)) {
+	// 	state.acc = 0;
+	// 	state.vel = v_max;
+	// 	state.pos = (t_acc * acc_max * 0.5) * t_acc + v_max * (t - t_acc);
+	// } else if (t <= (t_acc + t_coast + t_dec)) {
+	// 	double timeLeft = (t_acc + t_coast + t_dec) - t;
+	// 	state.acc = -dec_max;
+	// 	state.vel = ;
+	// }
 	return {position(t) * direction, velocity(t) * direction, acceleration(t) * direction};
 }
 

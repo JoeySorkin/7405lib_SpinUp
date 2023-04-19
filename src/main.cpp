@@ -1,5 +1,6 @@
 #include "main.h"
 #include "Drive.h"
+#include "Intake.h"
 #include "Logger.h"
 #include "Robot.h"
 #include "lib/geometry/Pose.h"
@@ -47,27 +48,6 @@ void disabled() {
 void competition_initialize() {}
 
 /**
- * Runs the user autonomous code. This function will be started in its own task
- * with the default priority and stack size whenever the robot is enabled via
- * the Field Management System or the VEX Competition Switch in the autonomous
- * mode. Alternatively, this function may be called in initialize or opcontrol
- * for non-competition testing purposes.
- *
- * If the robot is disabled or communications is lost, the autonomous task
- * will be stopped. Re-enabling the robot will restart the task, not re-start it
- * from where it left off.
- */
-void autonomous() {
-	sDrive->setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
-	LoggerPtr logger = sLogger->createSource("AUTONOMOUS");
-
-	while (true) {
-		logger->info("AUTONOMOUS LOOP\n");
-		pros::delay(100);
-	}
-}
-
-/**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
  * the Field Management System or the VEX Competition Switch in the operator
@@ -101,14 +81,18 @@ void opcontrol() {
 
 
 	// tuning profiled motions
-	sDrive->setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
+	sDrive->setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
 	// sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(70, 50, 60, 60, 0.1));
-	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(70, 50, 60, 60, 0.1));
-	sDrive->waitUntilSettled(10000);
-	sDrive->setCurrentMotion(std::make_unique<NullMotion>());
+	// sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(70, 20, 60, 60, 0.1));
+	// sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(50, 50, 60, 60, 0.1));
+	// sDrive->waitUntilSettled(10000);
+	// sDrive->setCurrentMotion(std::make_unique<NullMotion>());
 
-	// while (true) {
-	// 	logger->info("OPCONTROL LOOP\n");
-	// 	pros::delay(100);
-	// }
+	// start of auton
+	sDrive->setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+	sIntake->moveVoltage(12000);
+	sDrive->setCurrentMotion(std::make_unique<TimedMotion>(500, -6000));
+	pros::delay(500);
+	sIntake->moveVoltage(0);
+	sDrive->setCurrentMotion(std::make_unique<NullMotion>());
 }

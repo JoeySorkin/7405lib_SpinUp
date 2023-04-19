@@ -2,6 +2,7 @@
 #include "Robot.h"
 #include "Controller.h"
 #include "Drive.h"
+#include "Flywheel.h"
 #include "Intake.h"
 #include "Logger.h"
 Robot* Robot::INSTANCE = nullptr;
@@ -11,6 +12,7 @@ void Robot::initialize() {
 	sController->initialize();
 	sOdom->initialize();
 	sDrive->initialize();
+	sFlywheel->initialize();
 	sIntake->initialize();
 	setOpMode(AUTONOMOUS);
 }
