@@ -1,5 +1,6 @@
 #include "lib/physics/OpControlMotion.h"
 #include "Controller.h"
+#include <cstdio>
 
 Motion::MotorVoltages OpControlMotion::calculateVoltages(kinState state) {
 	int power = sController->getAnalog(Controller::left_y);
@@ -7,6 +8,8 @@ Motion::MotorVoltages OpControlMotion::calculateVoltages(kinState state) {
 
 	double left = (power + turn) / 127.0 * 12000;
 	double right = (power - turn) / 127.0 * 12000;
+	printf("left_y: %.i \n",sController->getAnalog(Controller::left_x));
+	printf("right_x: %.i \n",sController->getAnalog(Controller::right_x));
 
 	return {left, right};
 }

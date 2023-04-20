@@ -18,9 +18,9 @@ private:
 	void runner(void* ignored);
 
 	// Motors
-	pros::Motor frontLeft{ports::frontLeftMotor, true}, frontRight{ports::frontRightMotor, false},
-	        middleLeft{ports::middleLeftMotor, false}, middleRight{ports::middleRightMotor, true},
-	        backLeft{ports::backLeftMotor, true}, backRight{ports::backRightMotor, false};
+	pros::Motor frontLeft{ports::frontLeftMotor, true}, frontRight{ports::frontRightMotor},
+	        middleLeft{ports::middleLeftMotor, true}, middleRight{ports::middleRightMotor},
+	        backLeft{ports::backLeftMotor, true}, backRight{ports::backRightMotor};
 
 	// Motor Control
 	void setVoltageLeft(int16_t voltage);

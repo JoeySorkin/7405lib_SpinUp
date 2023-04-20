@@ -12,7 +12,7 @@ void Robot::initialize() {
 	sOdom->initialize();
 	sDrive->initialize();
 	sIntake->initialize();
-	setOpMode(AUTONOMOUS);
+	setOpMode(DRIVER);
 }
 
 void Robot::setOpMode(Robot::OpMode op) {

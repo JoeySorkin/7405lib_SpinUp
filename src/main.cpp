@@ -79,26 +79,7 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	sRobot->setOpMode(Robot::DRIVER);
 	sDrive->setCurrentMotion(std::make_unique<OpControlMotion>());
 	LoggerPtr logger = sLogger->createSource("OpControl");
-	// sDrive->setCurrentMotion(std::make_unique<PIDTurn>(90, PID(1.5, 0.01, 0.2, true, 10)));
-
-	// with heading correction
-	// sDrive->setCurrentMotion(std::make_unique<PIDMotion>(Pose(0, 12), PID(1.5, 0.01, 0.2, true, 10),
-	//                                                      PID(1.5, 0.01, 0.2, true, 10), 0.5));
-
-	// sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(24, 24, 30, 30, 0.55));
-	// sDrive->setCurrentMotion(std::make_unique<TimedMotion>(750, 4000));
-	// if (sDrive->waitUntilSettled(4000)) {
-	// 	logger->info("Done with movement\n");
-	// } else {
-	// 	logger->warn("Movement timed out\n");
-	// }
-	// sDrive->setCurrentMotion(std::make_unique<NullMotion>());
-	// pros::lcd::print(6, "Movement done");
-
-	// while (true) {
-	// 	logger->info("OPCONTROL LOOP\n");
-	// 	pros::delay(100);
-	// }
 }

@@ -77,9 +77,6 @@ void Odometry::updatePosition(void* params) {
 			perp_offset = 0;
 		}
 
-		// idk why Kylan put this here but I'm keeping it here for now
-		perp_offset = 0;
-
 		double distance =
 		        (dh == 0) ? (l_dist + r_dist) / 2.0 : ((l_dist + r_dist) / dh) * sin(dh / 2.0);// also need to test this
 
@@ -111,7 +108,6 @@ void Odometry::printOdom() {
 }
 
 kinState Odometry::getCurrentState() {
-
 	stateMutex.take(TIMEOUT_MAX);
 	kinState p = curr_state;
 	stateMutex.give();
