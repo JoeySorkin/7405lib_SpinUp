@@ -9,7 +9,7 @@ Robot* Robot::INSTANCE = nullptr;
 
 void Robot::initialize() {
 	sLogger->initialize("test.txt");
-	sController->initialize();
+//	sController->initialize();
 	sOdom->initialize();
 	sDrive->initialize();
 	sFlywheel->initialize();

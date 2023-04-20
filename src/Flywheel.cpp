@@ -272,7 +272,7 @@ void Flywheel::triple_shoot(uint32_t revamp_time_a, uint32_t revamp_time_b) {
 	setVoltage(12000);
 
 	sIntake->moveVoltage(-12000);
-	pros::delay(600);// TODO: make a constant
+	pros::delay(1500);// TODO: make a constant
 	sIntake->moveVoltage(0);
 
 

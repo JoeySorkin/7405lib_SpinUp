@@ -15,8 +15,8 @@ Odometry* Odometry::INSTANCE = nullptr;
 Odometry::Odometry()
     : prev_b(0), prev_l(0), prev_r(0), leftWheel(ports::leftRotation), rightWheel(ports::rightRotation),
       backWheel(ports::backRotation) {
-	backWheel.reset_position();
-	backWheel.set_data_rate(5);
+	//	backWheel.reset();
+	//	backWheel.set_data_rate(5);
 	leftWheel.reset_position();
 	leftWheel.set_data_rate(5);
 	rightWheel.reset_position();
@@ -28,12 +28,23 @@ Odometry::Odometry()
 
 
 void Odometry::initialize() {
+	prev_l = 0;
+	prev_b = 0;
+	prev_r = 0;
 	curr_state = kinState({0, 0, 0}, {0, 0, 0}, {0, 0, 0});
 	odom_task = pros::c::task_create([](void* _) { sOdom->updatePosition(_); }, nullptr, TASK_PRIORITY_DEFAULT,
 	                                 TASK_STACK_DEPTH_DEFAULT, "Odometry Task");
+	leftWheel.reset();
+	rightWheel.reset();
 }
 
+void Odometry::reset() {
+	curr_state = kinState({0, 0, 0}, {0, 0, 0}, {0, 0, 0});
+	leftWheel.reset();
+	rightWheel.reset();
+}
 void Odometry::updatePosition(void* params) {
+
 	while (true) {
 		uint32_t time = pros::millis();
 

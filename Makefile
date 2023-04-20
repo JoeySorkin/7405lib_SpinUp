@@ -196,7 +196,6 @@ $(BINDIR)/%.cpp.o: %.cpp $(DEPDIR)/%.cpp.d
 
 define createCompileCommands
 @echo Creating compile_commands.json
-$(call SED)
 endef
 
 # Pipe a line of code defining _PROS_COMPILE_TOOLSTAMP and _PROS_COMPILE_DIRECTORY into GCC,

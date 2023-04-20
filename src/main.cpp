@@ -1,5 +1,6 @@
 #include "main.h"
 #include "Drive.h"
+#include "Flywheel.h"
 #include "Intake.h"
 #include "Logger.h"
 #include "Robot.h"
@@ -11,6 +12,7 @@
 #include "lib/physics/PIDTurn.h"
 #include "lib/physics/ProfiledMotion.h"
 #include "lib/physics/TimedMotion.h"
+#include "lib/utils/Math.h"
 #include "pros/motors.h"
 #include "pros/rtos.hpp"
 #include <cstdio>
@@ -64,6 +66,14 @@ void opcontrol() {
 	sDrive->setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
 	sDrive->setCurrentMotion(std::make_unique<OpControlMotion>());
 	LoggerPtr logger = sLogger->createSource("OpControl");
+
+
+	while(true){
+		pros::delay(20);
+	}
+	sOdom->reset();
+
+
 	// sDrive->setCurrentMotion(std::make_unique<PIDTurn>(90, PID(1.5, 0.01, 0.2, true, 10)));
 
 	// with heading correction
@@ -89,10 +99,43 @@ void opcontrol() {
 	// sDrive->setCurrentMotion(std::make_unique<NullMotion>());
 
 	// start of auton
-	sDrive->setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
-	sIntake->moveVoltage(12000);
-	sDrive->setCurrentMotion(std::make_unique<TimedMotion>(500, -6000));
-	pros::delay(500);
-	sIntake->moveVoltage(0);
+//
+//	sDrive->setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+//	sIntake->moveVoltage(12000);
+//
+//	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(22.91, 50, 60, 60, 0.1));
+//	sDrive->waitUntilSettled(2500);
+//	sIntake->moveVoltage(0);
+//
+//	pros::delay(2000);
+//
+//	sDrive->setCurrentMotion(std::make_unique<NullMotion>());
+
+
+	sFlywheel->setVelocity(2500);
+
+		sIntake->moveVoltage(12000);
+
+		sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(22.91, 50, 60, 60, 0.1));
+		sDrive->waitUntilSettled(2500);
+		sIntake->moveVoltage(0);
+
+		pros::delay(2000);
+
+
+
+	sFlywheel->waitUntilSettled();
+
+	Pose goal = Pose(42,109, 0);
+	double turn_amount = sOdom->getCurrentState().position.headingToPoint(goal) * 180.0/M_PI;
+
+	pros::lcd::print(0, "turn amount %.2f", turn_amount);
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turn_amount, PID(500,0.1,0.1)));
+	sDrive->waitUntilSettled(5000);
+	pros::delay(2000);
+	sFlywheel->triple_shoot();
 	sDrive->setCurrentMotion(std::make_unique<NullMotion>());
+//	{H: 29.85, 0.053221, 22.8943216}
+//	{H: 48.7249, 0.703349, 70.381138}
+
 }

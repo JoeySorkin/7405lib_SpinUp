@@ -38,4 +38,5 @@ public:
 	double getRightVel();
 	double getRightPos();
 	void initialize();
+	void reset();
 };
