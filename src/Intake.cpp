@@ -10,7 +10,7 @@ Intake::Intake() : motors(ports::intake) {
 
 void Intake::initialize() {
 	sController->registerCallback([this]() { moveVoltage(12000); }, [this]() { moveVoltage(0); }, Controller::master,
-	                              Controller::r1, Controller::hold);
+	                              Controller::r1, Controller::rising);
 
 	sController->registerCallback([this]() { moveVoltage(-12000); },
 	                              [this]() {
@@ -19,7 +19,7 @@ void Intake::initialize() {
 		                              // called after r1
 		                              if (motors.at(0).get_power() < 0) { moveVoltage(0); }
 	                              },
-	                              Controller::master, Controller::r2, Controller::hold);
+	                              Controller::master, Controller::r2, Controller::rising);
 }
 
 void Intake::moveVoltage(int mv) {
