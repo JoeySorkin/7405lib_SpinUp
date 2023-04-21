@@ -73,9 +73,10 @@ void Flywheel::initialize() {
 	kI_lut.add_data(2350, 2);
 	kD_lut.add_data(2350, 0.001);
 	//
-	kP_lut.add_data(2518, 6);
-	kI_lut.add_data(2518, 0.5);
-	kD_lut.add_data(2518, 0.001);
+	// kP_lut.add_data(2515, 8);
+	kP_lut.add_data(2515, 11.2);
+	kI_lut.add_data(2515, 0.5);
+	kD_lut.add_data(2515, 0.005);
 	//
 	kP_lut.add_data(2650, 9);
 	kI_lut.add_data(2650, 5);
@@ -103,7 +104,7 @@ void Flywheel::runner(void* ignored) {
 	libM::CircularBuffer<double, 5> cbuf{};
 	int i = 0;
 	while (true) {
-		pros::lcd::print(7, "Rotation: %f", indexerRotation.get_angle() / 1000.0);
+		// pros::lcd::print(7, "Rotation: %f", indexerRotation.get_angle() / 1000.0);
 		//    countDisksInSilo();
 		i += 1;
 		//    double mAV =
@@ -124,8 +125,6 @@ void Flywheel::runner(void* ignored) {
 
 		pros::lcd::print(5, "Target Vel: %f", target_vel);
 		pros::lcd::print(6, "Vel: %f", _filtered_vel);
-		logger->debug("Vel: {:.2f} 	Temp: {}   Rotation: {}\n", _filtered_vel, motor.get_temperature(),
-		              indexerRotation.get_angle() / 1000.0);
 
 		double error = target_vel - _filtered_vel;
 		double power = util::clamp(0.0, 12000.0, pidf.calculate(error));
@@ -170,6 +169,10 @@ void Flywheel::runner(void* ignored) {
 
 			manual_shoot_flag = false;
 		}
+
+		logger->debug("Vel: {:.2f} 	Voltage: {} Temp: {}   Rotation: {}\n", _filtered_vel, power,
+		              motor.get_temperature(), indexerRotation.get_angle() / 1000.0);
+
 		last_pow = power;
 		pros::c::task_delay_until(&time, 20);
 		//    writeToCSV(pros::millis(), _last_vel, _last_filtered_vel, _actual_vel,

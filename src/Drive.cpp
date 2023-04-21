@@ -25,7 +25,7 @@ void Drive::runner(void* ignored) {
 
 		// check if motion has timed out (if it has, set current motion to nullmotion)
 		if (isTimedOut.load()) {
-			logger->info("TIMED OUT\n");
+			logger->warn("TIMED OUT\n");
 
 			currentMotion = std::make_unique<NullMotion>();
 			isTimedOut.store(false);

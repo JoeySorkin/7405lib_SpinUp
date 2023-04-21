@@ -194,7 +194,7 @@ std::string_view LogSource::levelToString(LogLevel level) {
 
 	using LogLevelType = std::underlying_type<LogLevel>::type;
 	// check that this actually works correctly and im not stupid
-	int logLevel = 32 - __builtin_clz(static_cast<int>(level));// doesn't work
+	int logLevel = 32 - __builtin_clz(static_cast<int>(level)) - 1;// doesn't work
 
 	if (logLevel > logLevelsMap.size() - 1) {
 		log(ERROR, pros::millis(),
