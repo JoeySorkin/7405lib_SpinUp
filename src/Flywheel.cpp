@@ -5,12 +5,14 @@
 #include "Flywheel.h"
 #include "Controller.h"
 #include "Intake.h"
+#include "Logger.h"
 #include "Robot.h"
 #include "lib/utils/CircularBuffer.h"
 #include "lib/utils/Math.h"
 #include "lib/utils/Timeout.h"
 
 Flywheel* Flywheel::INSTANCE = nullptr;
+LoggerPtr logger = sLogger->createSource("Flywheel");
 
 void Flywheel::initialize() {
 
@@ -101,6 +103,7 @@ void Flywheel::runner(void* ignored) {
 	libM::CircularBuffer<double, 5> cbuf{};
 	int i = 0;
 	while (true) {
+		pros::lcd::print(7, "Rotation: %f", indexerRotation.get_angle() / 1000.0);
 		//    countDisksInSilo();
 		i += 1;
 		//    double mAV =
@@ -121,6 +124,8 @@ void Flywheel::runner(void* ignored) {
 
 		pros::lcd::print(5, "Target Vel: %f", target_vel);
 		pros::lcd::print(6, "Vel: %f", _filtered_vel);
+		logger->debug("Vel: {:.2f} 	Temp: {}   Rotation: {}\n", _filtered_vel, motor.get_temperature(),
+		              indexerRotation.get_angle() / 1000.0);
 
 		double error = target_vel - _filtered_vel;
 		double power = util::clamp(0.0, 12000.0, pidf.calculate(error));
@@ -149,7 +154,8 @@ void Flywheel::runner(void* ignored) {
 			 *  a triple shot that DEPENDS on "waitUntilSettled"...
 			 *  no bullshit with sending extra boosts of voltage
 			 */
-			triple_shoot(revamp_a, revamp_b);
+			// triple_shoot(revamp_a, revamp_b);
+			triple_shoot();
 
 			triple_shoot_flag = false;
 
@@ -256,7 +262,7 @@ bool Flywheel::waitUntilSettled(uint32_t timeout, double thresh) {
 
 void Flywheel::shoot() {
 	sIntake->moveVel(-200);
-	pros::delay(200);
+	pros::delay(170);
 	sIntake->brake();
 }
 
@@ -265,14 +271,14 @@ uint32_t Flywheel::estimateRevampTime() {
 	return round(revamp_lut.get_val(vel));// bruh
 }
 
-void Flywheel::triple_shoot(uint32_t revamp_time_a, uint32_t revamp_time_b) {
+void Flywheel::triple_shoot(int mv, int intake, int delay) {
 	override = true;
-	int disks = disks_in_silo.load();
 
-	setVoltage(12000);
-
-	sIntake->moveVoltage(-12000);
-	pros::delay(1500);// TODO: make a constant
+	sIntake->moveVoltage(intake);
+	setVoltage(mv);
+	// pros::delay(1500);// TODO: make a constant
+	while ((indexerRotation.get_angle() / 1000.0) < 4) { pros::delay(10); }
+	pros::delay(delay);
 	sIntake->moveVoltage(0);
 
 

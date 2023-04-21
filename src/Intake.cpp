@@ -12,6 +12,9 @@ void Intake::initialize() {
 	sController->registerCallback([this]() { moveVoltage(12000); }, [this]() { moveVoltage(0); }, Controller::master,
 	                              Controller::r1, Controller::hold);
 
+	sController->registerCallback([this]() { moveVoltage(-12000); }, [this]() { moveVoltage(0); }, Controller::master,
+	                              Controller::y, Controller::hold);
+
 	// sController->registerCallback([this]() { moveVoltage(-12000); },
 	//                               [this]() {
 	// 	                              // this needs to be done because otherwise the r1's callback's moveVoltage will be

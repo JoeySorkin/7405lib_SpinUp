@@ -2,6 +2,7 @@
 #include "Controller.h"
 #include "lib/physics/MaxAccMotion.h"
 #include "lib/physics/NullMotion.h"
+#include "pros/motors.h"
 #include "pros/rtos.hpp"
 
 Drive* Drive::INSTANCE = nullptr;
@@ -130,4 +131,20 @@ void Drive::setBrakeMode(pros::motor_brake_mode_e_t mode) {
 	backRight.set_brake_mode(mode);
 	middleRight.set_brake_mode(mode);
 	frontRight.set_brake_mode(mode);
+}
+
+void Drive::setBrakeModeLeft(pros::motor_brake_mode_e_t mode) {
+	backLeft.set_brake_mode(mode);
+	middleLeft.set_brake_mode(mode);
+	frontLeft.set_brake_mode(mode);
+}
+
+void Drive::setBrakeModeRight(pros::motor_brake_mode_e_t mode) {
+	backRight.set_brake_mode(mode);
+	middleRight.set_brake_mode(mode);
+	frontRight.set_brake_mode(mode);
+}
+
+pros::motor_brake_mode_e_t Drive::getBrakeMode() const {
+	return backLeft.get_brake_mode();
 }

@@ -53,7 +53,9 @@ public:
 	void resetPosition();
 
 	void setBrakeMode(pros::motor_brake_mode_e_t mode);
-	pros::motor_brake_mode_e_t getBrakeMode();
+	void setBrakeModeLeft(pros::motor_brake_mode_e_t mode);
+	void setBrakeModeRight(pros::motor_brake_mode_e_t mode);
+	pros::motor_brake_mode_e_t getBrakeMode() const;
 
 	// Control
 	/**

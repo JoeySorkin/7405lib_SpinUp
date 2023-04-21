@@ -2,6 +2,8 @@
 #include "lib/controllers/PIDF.h"
 #include "lib/utils/LUT.h"
 #include "main.h"
+#include "pros/distance.hpp"
+#include "pros/rotation.hpp"
 #include <atomic>
 
 #define sFlywheel Flywheel::getInstance()
@@ -28,6 +30,8 @@ private:
 	int _stable_buff;
 
 	PIDF pidf;
+
+	pros::Rotation indexerRotation{1};
 
 	void setVoltage(int32_t voltage);
 	void countDisksInSilo();
@@ -60,7 +64,8 @@ public:
 	double getTargetVelocity();
 	void shoot();
 	void shoot_controller();
-	void triple_shoot(uint32_t revamp_time_a = 400, uint32_t revamp_time_b = 400);
+	// void triple_shoot(uint32_t revamp_time_a = 400, uint32_t revamp_time_b = 400);
+	void triple_shoot(int mv = 12000, int intake = -12000, int delay = 100);
 	void triple_shoot_controller(uint32_t revamp_time_a = 400, uint32_t revamp_time_b = 400);
 	uint32_t estimateRevampTime();
 	void no_time_triple_shot();

@@ -1,4 +1,5 @@
 #pragma once
+#include "Logger.h"
 #include "Motion.h"
 #include "lib/controllers/PID.h"
 
@@ -10,8 +11,14 @@ private:
 	PID pid;
 	int counter;// counter for how long we've been at a pos
 
+	bool brakeLeft;
+	bool brakeRight;
+
+	static LoggerPtr logger;
+
+
 public:
-	PIDTurn(double targetHeading, PID pid, double threshold = 0.5);
+	PIDTurn(double targetHeading, PID pid, bool brakeLeft = false, bool brakeRight = false, double threshold = 0.5);
 	MotorVoltages calculateVoltages(kinState state) override;
 	bool isSettled(kinState state) override;
 };
