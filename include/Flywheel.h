@@ -31,6 +31,8 @@ private:
 
 	PIDF pidf;
 
+	pros::ADIDigitalOut angleChange{'A'};
+	bool angleChangeState = false;
 	pros::Rotation indexerRotation{1};
 
 	void setVoltage(int32_t voltage);
@@ -55,7 +57,7 @@ public:
 	 *
 	 * @return true if timed out :)
 	 */
-	bool waitUntilSettled(uint32_t timeout = TIMEOUT_MAX, double thresh = 20);
+	bool waitUntilSettled(uint32_t timeout = TIMEOUT_MAX, double thresh = 13);
 
 	bool waitUntilVelocity(double target, double acc, uint32_t timeout = TIMEOUT_MAX);
 	double getFilteredVelocity();

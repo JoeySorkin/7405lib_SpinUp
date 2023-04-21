@@ -71,6 +71,11 @@ bool Drive::waitUntilSettled(uint32_t timeout) {
 	while (!timer.timedOut()) {
 		if (isSettled.load()) {
 			isSettled.store(false);
+
+			currentMotionMutex.take();
+			currentMotion = std::make_unique<NullMotion>();
+			currentMotionMutex.give();
+
 			return true;
 		}
 
@@ -81,7 +86,7 @@ bool Drive::waitUntilSettled(uint32_t timeout) {
 	isTimedOut.store(true);
 
 	// wait until the Drive thread realizes we timed out
-	while (isTimedOut.load()) { pros::delay(20); }
+	while (isTimedOut.load()) { pros::delay(10); }
 
 	return false;
 }

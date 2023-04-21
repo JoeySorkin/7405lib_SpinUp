@@ -35,6 +35,18 @@ void Flywheel::initialize() {
 	sController->registerCallback([this]() { this->controllerVel -= 20; }, []() {}, Controller::master,
 	                              Controller::down, Controller::rising);
 
+	sController->registerCallback([this]() { setVelocity(2100); }, []() {}, Controller::master, Controller::a,
+	                              Controller::rising);
+
+	sController->registerCallback([this]() { setVelocity(2000); }, []() {}, Controller::master, Controller::b,
+	                              Controller::rising);
+
+	sController->registerCallback([this]() {
+		angleChangeState = !angleChangeState;
+		angleChange.set_value(angleChangeState);
+	}, []() {}, Controller::master, Controller::x,
+	                              Controller::rising);
+
 	kF_lut.add_data(3863.160000, 3.106265);
 	kF_lut.add_data(3688.488000, 3.117809);
 	kF_lut.add_data(3544.328000, 3.103550);
@@ -78,9 +90,9 @@ void Flywheel::initialize() {
 	kI_lut.add_data(2515, 0.5);
 	kD_lut.add_data(2515, 0.005);
 	//
-	kP_lut.add_data(2650, 9);
-	kI_lut.add_data(2650, 5);
-	kD_lut.add_data(2650, 0.001);
+	kP_lut.add_data(2615, 11.2);
+	kI_lut.add_data(2615, 0.5);
+	kD_lut.add_data(2615, 0.005);
 
 	pidf.setIntegralBound(200);
 
@@ -200,6 +212,8 @@ void Flywheel::shoot_auton(double revamp) {
 
 void Flywheel::setVelocity(double set_vel) {
 	if (_target_speed.load() != set_vel) {
+		pros::c::controller_clear_line(pros::E_CONTROLLER_MASTER, 0);
+		pros::c::controller_print(pros::E_CONTROLLER_MASTER, 0,0, "Target Vel: %f", set_vel);
 		_target_speed = set_vel;
 		pidf.setSetpoint(set_vel);
 		double new_kP = kP_lut.get_val(set_vel);
@@ -280,7 +294,8 @@ void Flywheel::triple_shoot(int mv, int intake, int delay) {
 	sIntake->moveVoltage(intake);
 	setVoltage(mv);
 	// pros::delay(1500);// TODO: make a constant
-	while ((indexerRotation.get_angle() / 1000.0) < 4) { pros::delay(10); }
+	Timeout timer = Timeout(1400);
+	while (!timer.timedOut() && (indexerRotation.get_angle() / 1000.0) < 4) { pros::delay(10); }
 	pros::delay(delay);
 	sIntake->moveVoltage(0);
 
