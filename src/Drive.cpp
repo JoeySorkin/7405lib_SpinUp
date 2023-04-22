@@ -1,5 +1,6 @@
 #include "Drive.h"
 #include "Controller.h"
+#include "Odometry.h"
 #include "lib/physics/MaxAccMotion.h"
 #include "lib/physics/NullMotion.h"
 #include "pros/rtos.hpp"

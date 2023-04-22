@@ -1,4 +1,5 @@
 #pragma once
+#include "lib/geometry/TrapezoidProfile.h"
 #include <cmath>
 #include <numbers>
 

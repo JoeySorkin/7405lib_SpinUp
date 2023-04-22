@@ -17,6 +17,7 @@ class Shooter{
         int prevPos;
         std::atomic<bool> isShooting;
         std::atomic<bool> isReady;
+        std::atomic<bool> isBoosted;
 
         pros::ADIDigitalOut leftBoostPiston, rightBoostPiston, toggleBoostPiston;
 

@@ -2,24 +2,27 @@
 #include "Constants.h"
 #include "pros/rtos.hpp"
 #include <cstddef>
+#include <cstdio>
 #include <valarray>
 #include "Controller.h"
 
 Shooter* Shooter::INSTANCE = nullptr;
 
 Shooter::Shooter()
-    : scataMotor(ports::scataMotor), scataRotation(ports::scataRotation), leftBoostPiston({5, 'B'}, false), 
+    : scataMotor(ports::scataMotor, true), scataRotation(ports::scataRotation, true), leftBoostPiston({5, 'B'}, false), 
     rightBoostPiston({5, 'H'}, true), toggleBoostPiston({5, 'A'}, false), rightExpansionPiston(ports::rightExpansion),
-    leftExpansionPiston(ports::leftExpansion){}
+    leftExpansionPiston(ports::leftExpansion), isShooting(false), isBoosted(false){}
 
 void Shooter::initialize(){
-    scataRotation.reset();
+    scataRotation.reset_position();
     shooter_task = pros::c::task_create([](void* _) { sShooter->shooterRunner(_); }, nullptr, TASK_PRIORITY_DEFAULT,
 	                                 TASK_STACK_DEPTH_DEFAULT, "Shooter Task");
 }
 
 void Shooter::shooterRunner(void* params){
     while (true){
+        static int counter;
+        counter ++;
 
         //pull back cata, only allow shootingflag to turn true if cata is pulled back.
         //high power when scata is far from being at bottom, low power when scata is
@@ -31,12 +34,17 @@ void Shooter::shooterRunner(void* params){
             scataMotor.move_voltage(scata::lowPower);
         }
         else {
+            scataMotor.move_voltage(0);
             isReady = true;
         }
+
 
         if (sController->getDigital(Controller::l1) && isReady){
             fireScata();
         }
+
+        sController->registerCallback([this]() { toggleBoost(!isBoosted);}, [this]() {}, Controller::master,
+	                              Controller::l2, Controller::rising);
 
 
         //detects when to fire. if the difference in current and last position changed 
@@ -44,16 +52,21 @@ void Shooter::shooterRunner(void* params){
         //the scata
         if (isShooting && std::abs(scataRotation.get_position() - prevPos) < 500){
             scataMotor.move_voltage(12000);
+            if (isBoosted){
+                leftBoostPiston.set_value(true);
+                rightBoostPiston.set_value(true);
+                printf("pushing\n");
+            }
+            // else {
+            //     leftBoostPiston.set_value(false);
+            //     rightBoostPiston.set_value(false);
+            //     printf("pulling\n");
+            // }
         }
         else {
-            toggleBoost(false);
             isShooting = false;
-            scataMotor.move_voltage(0);
-        }
-
-
-        if (sController->getDigital(Controller::l2)){
-            toggleBoost(true);
+            leftBoostPiston.set_value(false);
+            rightBoostPiston.set_value(false);
         }
 
         prevPos = scataRotation.get_position();
@@ -68,14 +81,7 @@ void Shooter::fireScata(){
 }
 
 void Shooter::toggleBoost(bool toggle){
-    if (toggle && isReady){
-        leftBoostPiston.set_value(true);
-        rightBoostPiston.set_value(true);
-    }
-    else {
-        leftBoostPiston.set_value(false);
-        rightBoostPiston.set_value(false);
-    }
+    isBoosted = toggle;
 }
 
 void Shooter::fireExpansion(){

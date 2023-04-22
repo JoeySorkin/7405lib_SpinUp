@@ -1,6 +1,7 @@
 #include "main.h"
 #include "Drive.h"
 #include "Logger.h"
+#include "Odometry.h"
 #include "Robot.h"
 #include "lib/controllers/PID.h"
 #include "lib/geometry/Pose.h"
@@ -13,6 +14,9 @@
 #include "lib/physics/TimedMotion.h"
 #include "pros/rtos.hpp"
 #include <cstdio>
+#include <memory>
+#include "Shooter.h"
+#include "Intake.h"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -81,6 +85,14 @@ void autonomous() {
  */
 void opcontrol() {
 	// sRobot->setOpMode(Robot::DRIVER);
-	sDrive->setCurrentMotion(std::make_unique<OpControlMotion>());
+	// sDrive->setCurrentMotion(std::make_unique<OpControlMotion>());
+	sRobot->setOpMode(Robot::AUTONOMOUS);
+
+	sIntake->moveVoltage(12000);
+	pros::delay(2000);
+	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(sOdom->getCurrentState().position.distanceTo(Pose(0.0, 35.0))));
+	sDrive->waitUntilSettled(2000);
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(sOdom->getCurrentState().position.headingToPoint(Pose(10.0, 10.0, 60.0)), PID(200.0, 0.0, 700.0)));
+	
 	LoggerPtr logger = sLogger->createSource("Profiled motion");
 }

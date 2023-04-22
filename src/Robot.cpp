@@ -4,6 +4,7 @@
 #include "Drive.h"
 #include "Intake.h"
 #include "Logger.h"
+#include "Shooter.h"
 Robot* Robot::INSTANCE = nullptr;
 
 void Robot::initialize() {
@@ -12,6 +13,7 @@ void Robot::initialize() {
 	sOdom->initialize();
 	sDrive->initialize();
 	sIntake->initialize();
+	sShooter->initialize();
 	setOpMode(DRIVER);
 }
 
