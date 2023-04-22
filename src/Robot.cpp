@@ -9,11 +9,16 @@ Robot* Robot::INSTANCE = nullptr;
 
 void Robot::initialize() {
 	sLogger->initialize("test.txt");
-//	 sController->initialize();
+	pros::delay(50);
+	//	 sController->initialize();
 	sOdom->initialize();
+	pros::delay(50);
 	sDrive->initialize();
+	pros::delay(50);
 	sFlywheel->initialize();
+	pros::delay(50);
 	sIntake->initialize();
+	pros::delay(50);
 	setOpMode(AUTONOMOUS);
 }
 
