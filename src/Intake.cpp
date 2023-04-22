@@ -1,5 +1,6 @@
 #include "Intake.h"
 #include "Controller.h"
+#include "Shooter.h"
 
 Intake* Intake::INSTANCE = nullptr;
 
@@ -8,6 +9,8 @@ Intake::Intake() : motors(ports::intake) {
 	motors.set_gearing(pros::E_MOTOR_GEAR_200);
 }
 
+//we need to add an if/else statement to not allow intaking when shooter is not ready. 
+//use the "readyToFire" function inside of shooter to check
 void Intake::initialize() {
 	sController->registerCallback([this]() { moveVoltage(12000); }, [this]() { moveVoltage(0); }, Controller::master,
 	                              Controller::r1, Controller::hold);

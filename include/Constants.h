@@ -11,17 +11,17 @@ namespace ports {
 	constexpr int backLeftMotor = 10;
 	constexpr int backRightMotor = 16;
 
-	// constexpr int frontRightMotor = 1;
-	// constexpr int frontLeftMotor = 2;
-	// constexpr int middleRightMotor = 9;
-	// constexpr int middleLeftMotor = 3;
-	// constexpr int backRightMotor = 10;
-	// constexpr int backLeftMotor = 16;
-	constexpr std::initializer_list<std::int8_t> intake = {};
+	constexpr int scataRotation = -8;
+	constexpr int scataMotor = -4;
 
 	constexpr int leftRotation = 0;
 	constexpr int rightRotation = 0;
 	constexpr int backRotation = 7;
+
+	constexpr int rightExpansion = 0;
+	constexpr int leftExpansion = 0;
+
+constexpr std::initializer_list<std::int8_t> intake = {6};
 }// namespace ports
 
 
@@ -42,3 +42,15 @@ namespace chassis {
 	constexpr double maxAlphaUp = 1;
 	constexpr double maxAlphaDown = 1;
 }// namespace chassis
+
+namespace scata {
+	constexpr int lowPowerThreshold = -300;
+	constexpr int stopThreshold = -100;
+
+	constexpr int lowPower = 7500;
+	constexpr int highPower = 12000;
+
+	constexpr std::initializer_list<std::int8_t> leftBoost = {5, 'B'}; //need to check which one is left and right
+	constexpr std::initializer_list<std::int8_t> rightBoost = {5, 'H'};
+	constexpr std::initializer_list<std::int8_t> toggleBoost = {5, 'A'};
+}
