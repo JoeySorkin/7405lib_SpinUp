@@ -15,7 +15,7 @@ private:
 	[[noreturn]] void runner(void* ignored);
 	std::atomic<bool> override = false;
 	double _last_vel, _last_filtered_vel;
-	double _actual_vel, _filtered_vel, controllerVel = 1900;
+	double _actual_vel, _filtered_vel, controllerVel = 2000;
 	double kF_shift = 0;
 	std::atomic<double> _target_speed;
 	std::atomic<bool> _coasting;
@@ -33,6 +33,10 @@ private:
 
 	pros::ADIDigitalOut angleChange{'A'};
 	bool angleChangeState = false;
+	pros::ADIDigitalOut rightExpansion{'B'};
+	pros::ADIDigitalOut leftExpansion{'C'};
+	pros::ADIDigitalOut blocker{'D'};
+
 	pros::Rotation indexerRotation{1};
 
 	void setVoltage(int32_t voltage);

@@ -16,6 +16,9 @@ LoggerPtr logger = sLogger->createSource("Flywheel");
 
 void Flywheel::initialize() {
 
+	// RIGHT EXP = Right
+	// DOWN = left expansion
+	// L2 = blocker
 	sController->registerCallback(
 	        [this]() {
 		        if (util::fpEquality(this->getTargetVelocity(), controllerVel)) {
@@ -35,10 +38,19 @@ void Flywheel::initialize() {
 	sController->registerCallback([this]() { this->controllerVel -= 20; }, []() {}, Controller::master,
 	                              Controller::down, Controller::rising);
 
-	sController->registerCallback([this]() { setVelocity(2100); }, []() {}, Controller::master, Controller::a,
+	sController->registerCallback([this]() { setVelocity(2200); }, []() {}, Controller::master, Controller::a,
 	                              Controller::rising);
 
-	sController->registerCallback([this]() { setVelocity(2000); }, []() {}, Controller::master, Controller::b,
+	sController->registerCallback([this]() { setVelocity(2100); }, []() {}, Controller::master, Controller::b,
+	                              Controller::rising);
+
+	sController->registerCallback([this]() { rightExpansion.set_value(true); }, []() {}, Controller::master, Controller::right,
+	                              Controller::rising);
+
+	sController->registerCallback([this]() { leftExpansion.set_value(true); }, []() {}, Controller::master, Controller::down,
+	                              Controller::rising);
+
+	sController->registerCallback([this]() { blocker.set_value(true); }, []() {}, Controller::master, Controller::l2,
 	                              Controller::rising);
 
 	sController->registerCallback([this]() {
@@ -212,8 +224,7 @@ void Flywheel::shoot_auton(double revamp) {
 
 void Flywheel::setVelocity(double set_vel) {
 	if (_target_speed.load() != set_vel) {
-		pros::c::controller_clear_line(pros::E_CONTROLLER_MASTER, 0);
-		pros::c::controller_print(pros::E_CONTROLLER_MASTER, 0,0, "Target Vel: %f", set_vel);
+		pros::c::controller_print(pros::E_CONTROLLER_MASTER, 2,0, "RPM: %f", set_vel);
 		_target_speed = set_vel;
 		pidf.setSetpoint(set_vel);
 		double new_kP = kP_lut.get_val(set_vel);

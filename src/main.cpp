@@ -42,15 +42,12 @@ void disabled() {
  * starts.
  */
 void competition_initialize() {}
-
-void opcontrol() {
-
-	sDrive->setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
-	sDrive->setCurrentMotion(std::make_unique<OpControlMotion>());
-	LoggerPtr logger = sLogger->createSource("OpControl");
-
+void left_auton(){
+	LoggerPtr logger = sLogger->createSource("Left Auto");
 	// left auton - have to rerun with setting brake mode to hold
-	/*uint32_t startTime = pros::micros();
+	sDrive->setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+	pros::delay(50);
+	uint32_t startTime = pros::micros();
 	sFlywheel->setVelocity(2615);
 	sOdom->reset();
 
@@ -71,7 +68,7 @@ void opcontrol() {
 	logger->info("Arc Motion To Disk + Move to intake disc\n");
 	// -45.7
 	// trying -43 first
-	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(-43, PID(185, 70, 0, true, 2), true, false, 0.5));
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(-43, PID(175, 60, 0, true, 2), true, false, 0.5));
 	sDrive->waitUntilSettled();
 	sIntake->moveVoltage(12000);
 	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(
@@ -88,9 +85,9 @@ void opcontrol() {
 
 	double turnAmount = sOdom->getCurrentState().position.headingToPoint(goal) / M_PI * 180;
 	logger->info("Rotate to basket to shoot. Heading to basket: {}\n", turnAmount);
-	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turnAmount, PID(140, 70, 40, true, 5), false, false, 0.5));
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turnAmount, PID(127, 40, 18, true, 5), false, false, 0.5));
 	//	sDrive->waitUntilSettled(1500);
-	    sDrive->waitUntilSettled();
+	sDrive->waitUntilSettled();
 	sDrive->setCurrentMotion(std::make_unique<NullMotion>());
 	logger->info("Turned to basket. Shooting discs\n");
 
@@ -100,9 +97,9 @@ void opcontrol() {
 	pros::delay(50);
 	sIntake->moveVoltage(0);
 	if (sFlywheel->waitUntilSettled()) {
-	    logger->warn("Flywheel timed out\n");
+		logger->warn("Flywheel timed out\n");
 	} else {
-	    logger->info("Flywheel stabilized\n");
+		logger->info("Flywheel stabilized\n");
 	}
 	// pros::delay(600);
 
@@ -112,9 +109,9 @@ void opcontrol() {
 	sIntake->moveVoltage(0);
 
 	if (sFlywheel->waitUntilSettled()) {
-	    logger->warn("Flywheel timed out\n");
+		logger->warn("Flywheel timed out\n");
 	} else {
-	    logger->info("Flywheel stabilized\n");
+		logger->info("Flywheel stabilized\n");
 	}
 
 	sFlywheel->shoot();
@@ -126,8 +123,8 @@ void opcontrol() {
 	Pose threeStack = Pose(36.92, 34.726);
 	turnAmount = sOdom->getCurrentState().position.headingToPoint(threeStack) / M_PI * 180;
 	logger->info("Turn Amount to 3 stack: {}\n", turnAmount);
-	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turnAmount, PID(105, 85, 0, true, 2), false, false, 0.5));
-//	sDrive->waitUntilSettled(1500);
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turnAmount, PID(105, 35, 20, true, 5), false, false, 0.5));
+	//	sDrive->waitUntilSettled(1500);
 	sDrive->waitUntilSettled();
 	sIntake->moveVoltage(12000);
 	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(threeStack.distanceTo(sOdom->getCurrentState().position),
@@ -136,8 +133,8 @@ void opcontrol() {
 	sDrive->setCurrentMotion(std::make_unique<NullMotion>());
 
 	turnAmount = sOdom->getCurrentState().position.headingToPoint(goal) / M_PI * 180;
-	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turnAmount, PID(93, 75, 5, true, 5), false, false, 0.5));
-//	sDrive->waitUntilSettled(2500);
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turnAmount, PID(82, 35, 20, true, 5), false, false, 0.5));
+	//	sDrive->waitUntilSettled(2500);
 	sDrive->waitUntilSettled();
 	sDrive->setCurrentMotion(std::make_unique<NullMotion>());
 	sIntake->moveVoltage(0);
@@ -150,9 +147,9 @@ void opcontrol() {
 	pros::delay(50);
 	sIntake->moveVoltage(0);
 	if (sFlywheel->waitUntilSettled(1250)) {
-	    logger->warn("Flywheel timed out\n");
+		logger->warn("Flywheel timed out\n");
 	} else {
-	    logger->info("Flywheel stabilized\n");
+		logger->info("Flywheel stabilized\n");
 	}
 	// pros::delay(600);
 
@@ -161,9 +158,9 @@ void opcontrol() {
 	pros::delay(50);
 	sIntake->moveVoltage(0);
 	if (sFlywheel->waitUntilSettled(1250)) {
-	    logger->warn("Flywheel timed out\n");
+		logger->warn("Flywheel timed out\n");
 	} else {
-	    logger->info("Flywheel stabilized\n");
+		logger->info("Flywheel stabilized\n");
 	}
 
 	sFlywheel->shoot();
@@ -175,10 +172,12 @@ void opcontrol() {
 	pros::delay(100);
 	sLogger->terminate();// just to get rid of logging info for time while making autons*/
 
-
+}
+void right_auton(){
 	// -----------------------------------------------------------
 	// right auton
-	/*uint32_t startTime = pros::micros();
+	LoggerPtr logger = sLogger->createSource("Right Auto");
+	uint32_t startTime = pros::micros();
 	sOdom->reset();
 
 
@@ -206,9 +205,9 @@ void opcontrol() {
 	logger->info("Moving to intake first disc\n");
 	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(22.91, 50, 60, 60, 0.1));
 	if (sDrive->waitUntilSettled(2500)) {
-	    logger->info("Done with movement to disc\n");
+		logger->info("Done with movement to disc\n");
 	} else {
-	    logger->warn("Movement to disc timed out\n");
+		logger->warn("Movement to disc timed out\n");
 	}
 
 	Pose goal = Pose(42, 104.7, 0);
@@ -217,11 +216,11 @@ void opcontrol() {
 	pros::lcd::print(0, "turn amount %.2f", turn_amount);
 	logger->info("Turn Amount To Basket: {}\n", turn_amount);
 	// sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turn_amount, PID(160, 100, 0, true, 3)));// tuning
-	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turn_amount, PID(163, 80, 0, true, 3)));// tuning
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turn_amount, PID(155, 67, 7, true, 5)));// tuning
 	if (sDrive->waitUntilSettled(2000)) {
-	    logger->info("Turn to basket done\n");
+		logger->info("Turn to basket done\n");
 	} else {
-	    logger->warn("Turn to basket timed out\n");
+		logger->warn("Turn to basket timed out\n");
 	}
 	sIntake->moveVoltage(0);
 	sDrive->setCurrentMotion(std::make_unique<NullMotion>());
@@ -236,9 +235,9 @@ void opcontrol() {
 	sIntake->moveVoltage(0);
 	// sFlywheel->waitUntilSettled(700);
 	if (sFlywheel->waitUntilSettled(700)) {
-	    logger->warn("Flywheel timed out\n");
+		logger->warn("Flywheel timed out\n");
 	} else {
-	    logger->warn("Flywheel stabilized\n");
+		logger->warn("Flywheel stabilized\n");
 	}
 	// pros::delay(600);
 
@@ -247,9 +246,9 @@ void opcontrol() {
 	pros::delay(50);
 	sIntake->moveVoltage(0);
 	if (sFlywheel->waitUntilSettled(700)) {
-	    logger->warn("Flywheel timed out\n");
+		logger->warn("Flywheel timed out\n");
 	} else {
-	    logger->warn("Flywheel stabilized\n");
+		logger->warn("Flywheel stabilized\n");
 	}
 	// pros::delay(600);
 
@@ -288,9 +287,9 @@ void opcontrol() {
 	logger->info("Turn to line of 3\n");
 	sDrive->setCurrentMotion(
 	        std::make_unique<PIDTurn>(sOdom->getCurrentState().position.headingToPoint(endTarget) / M_PI * 180,
-	                                  PID(91, 43, 20, true, 5)));// tune this maybe - keep watch
-//	sDrive->waitUntilSettled(2000);
-	    sDrive->waitUntilSettled();
+	                                  PID(160, 15, 80, true, 5)));// tune this maybe - keep watch
+	                                                             //	sDrive->waitUntilSettled(2000);
+	sDrive->waitUntilSettled();
 	sIntake->moveVoltage(12000);
 	sDrive->setCurrentMotion(
 	        std::make_unique<ProfiledMotion>(sOdom->getCurrentState().position.distanceTo(endTarget), 50, 60, 60, 0.1));
@@ -299,8 +298,8 @@ void opcontrol() {
 	turn_amount = sOdom->getCurrentState().position.headingToPoint(goal) * 180.0 / M_PI;
 	logger->info("Turn Amount To Basket: {}\n", turn_amount);
 	// sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turn_amount, PID(85, 100, 0, true, 2)));// tuning
-	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turn_amount, PID(80, 50, 0, true, 5)));// tuning
-//	sDrive->waitUntilSettled(2000);
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turn_amount, PID(165, 5, 80, true, 5)));// tuning
+	                                                                                          //	sDrive->waitUntilSettled(2000);
 	sDrive->waitUntilSettled();
 	sDrive->setCurrentMotion(std::make_unique<NullMotion>());
 	logger->info("Done movement\n");
@@ -316,9 +315,9 @@ void opcontrol() {
 	pros::delay(70);
 	sIntake->moveVoltage(0);
 	if (sFlywheel->waitUntilSettled(700)) {
-	    logger->warn("Flywheel timed out\n");
+		logger->warn("Flywheel timed out\n");
 	} else {
-	    logger->warn("Flywheel stabilized\n");
+		logger->warn("Flywheel stabilized\n");
 	}
 	// sFlywheel->waitUntilSettled();
 	// pros::delay(600);
@@ -333,8 +332,8 @@ void opcontrol() {
 	// THEN JUST APPLY backwards drive pressure and do intake
 	logger->info("Moving back to roller\n");
 	// sDrive->setCurrentMotion(std::make_unique<PIDTurn>(-39, PID(88, 120, 0, true, 2)));
-	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(-39, PID(88, 140, 0, true, 2)));
-//	sDrive->waitUntilSettled(2000);
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(-39, PID(165, 5, 80, true, 5)));
+	//	sDrive->waitUntilSettled(2000);
 	sDrive->waitUntilSettled();
 	logger->info("Turn done\n");
 	sDrive->setCurrentMotion(std::make_unique<NullMotion>());
@@ -358,19 +357,21 @@ void opcontrol() {
 
 	sDrive->setCurrentMotion(std::make_unique<NullMotion>());// tuning
 	sDrive->setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
-	sFlywheel->setVelocity(0);*/
+	sFlywheel->setVelocity(0);
 	//	{H: 29.85, 0.053221, 22.8943216}
 	//	{H: 48.7249, 0.703349, 70.381138}
 
 
 	// -----------------------------------------------------------
-	// carry auton
+}
+void carry_auton(){
+	LoggerPtr logger = sLogger->createSource("Carry Auto");
 	uint32_t startTime = pros::micros();
 	sOdom->reset();
 	sDrive->setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
 	sFlywheel->setVelocity(2440);
 
-	Pose goal = Pose(-18.801, 116.184);
+	Pose goal = Pose(-15.801, 116.184);
 
 
 	// move back and hit roller
@@ -389,7 +390,7 @@ void opcontrol() {
 	Pose threeStackPose = Pose(32.6, 37.651);
 	double turnAmount = sOdom->getCurrentState().position.headingToPoint(threeStackPose) / M_PI * 180;
 	logger->info("Arc Motion To Disk. Heading to: {}\n", turnAmount);
-	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turnAmount, PID(175, 50, 35, true, 5), false, true, 0.5));
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turnAmount, PID(180, 68, 5, true, 6), false, true, 0.5));
 	sDrive->waitUntilSettled();
 	sDrive->setCurrentMotion(std::make_unique<NullMotion>());
 	logger->info("Arc Motion Done\n");
@@ -404,7 +405,7 @@ void opcontrol() {
 
 	turnAmount = sOdom->getCurrentState().position.headingToPoint(goal) / M_PI * 180;
 	logger->info("Rotate to basket: {}\n", turnAmount);
-	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turnAmount, PID(95, 35, 20, true, 9), false, false, 0.5));
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turnAmount, PID(86, 33, 6, true, 4.5), false, false, 0.5));
 	sDrive->waitUntilSettled();
 	sDrive->setCurrentMotion(std::make_unique<NullMotion>());
 	logger->info("Done rotating to basket.\n");
@@ -435,22 +436,50 @@ void opcontrol() {
 	}
 
 	sFlywheel->shoot();
-	logger->info("Done shooting discs\n");
 
-	Pose endpoint = Pose(92.42, 96.48);
+
+	logger->info("Done shooting discs\n");
+	pros::delay(50);
+	Pose endpoint = Pose(85.59, 84.17);
 	// then turn to heading -80
 	logger->info("Turning to line of 3\n");
 	turnAmount = sOdom->getCurrentState().position.headingToPoint(endpoint) / M_PI * 180;
-	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turnAmount, PID(85, 45, 0, true, 5), false, false, 0.5));
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turnAmount, PID(86, 33, 6,  true, 4.5), false, false, 0.5));
 	sDrive->waitUntilSettled();
-	//
+	// 47.5, 84.19, 84.17
+	sIntake->moveVoltage(12000);
 	sDrive->setCurrentMotion(
-	        std::make_unique<ProfiledMotion>(sOdom->getCurrentState().position.distanceTo(endpoint), 50, 60, 60, 0.25));
+	        std::make_unique<ProfiledMotion>(sOdom->getCurrentState().position.distanceTo(endpoint), 44, 60, 60, 0.25));
+	sDrive->waitUntilSettled();
 
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(240, PID(85, 25, 20, true, 5), false, false, 0.5));
+	sDrive->waitUntilSettled();
 
 	logger->info("DONE. Time took: {}\n", (pros::micros() - startTime) / 1000.0 / 1000.0);
 
+
 	// just to get points
-	sDrive->setCurrentMotion(std::make_unique<NullMotion>());// tuning
-	sDrive->setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
+	//	 s
+}
+
+/**
+ * Runs the user autonomous code. This function will be started in its own task
+ * with the default priority and stack size whenever the robot is enabled via
+ * the Field Management System or the VEX Competition Switch in the autonomous
+ * mode. Alternatively, this function may be called in initialize or opcontrol
+ * for non-competition testing purposes.
+ *
+ * If the robot is disabled or communications is lost, the autonomous task
+ * will be stopped. Re-enabling the robot will restart the task, not re-start it
+ * from where it left off.
+ */
+void autonomous() {
+	left_auton();
+}
+
+void opcontrol() {
+//	left_auton();
+right_auton();
+//	sDrive->setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
+//	sDrive->setCurrentMotion(std::make_unique<OpControlMotion>());
 }

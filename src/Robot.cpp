@@ -10,7 +10,8 @@ Robot* Robot::INSTANCE = nullptr;
 void Robot::initialize() {
 	sLogger->initialize("test.txt");
 	pros::delay(50);
-	//	 sController->initialize();
+//	 sController->initialize();
+	 pros::delay(50);
 	sOdom->initialize();
 	pros::delay(50);
 	sDrive->initialize();
