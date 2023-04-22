@@ -1,5 +1,6 @@
 #include "lib/physics/PIDMotion.h"
 #include "lib/utils/Math.h"
+#include <cstdio>
 
 PIDMotion::PIDMotion(Pose pose, PID pwrPID, PID trnPID, bool headingCorrection, double threshold)
     : threshold(threshold), targetPose(pose), pwrPID(pwrPID), trnPID(trnPID), counter(0),
@@ -13,6 +14,7 @@ Motion::MotorVoltages PIDMotion::calculateVoltages(kinState state) {
 
 	double err = -errX * std::sin(state.position.getTheta()) +
 	             errY * std::cos(state.position.getTheta());// TODO: do the code to get only forwards dist
+	printf("errx %.2f, erry %.2f, errtotal %.2f \n", errX, errY, err);
 
 	// in degrees
 	double headingToTarget = util::toDeg(state.position.headingToPoint(targetPose));

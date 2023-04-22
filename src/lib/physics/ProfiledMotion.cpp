@@ -3,6 +3,7 @@
 #include "Logger.h"
 #include "Odometry.h"
 #include "lib/controllers/PID.h"
+#include <cstdio>
 
 LoggerPtr ProfiledMotion::logger = sLogger->createSource("ProfiledMotion", 0);
 
@@ -25,10 +26,11 @@ Motion::MotorVoltages ProfiledMotion::calculateVoltages(kinState state) {
 	auto targetState = profile.getState(time);
 
 	// random values - and the divsor is inches/S or inches/S^2
-	constexpr double kV = 12000 / 60.0;
-	constexpr double kA = 12000 / 90.0;
-	constexpr double kDe = 12000 / 90.0;
+	constexpr double kV = 12000 / chassis::maxVel;
+	constexpr double kA = 12000 / 300.0; //random # for now
+	constexpr double kDe = 12000 / 300.0;
 	PID posPID = PID(0, 0, 0);
+	printf("targvelo %.2f, \n", targetState.vel);
 
 	double FF = kV * targetState.vel;
 	FF += targetState.acc > 0 ? kA * targetState.acc : kDe * targetState.acc;

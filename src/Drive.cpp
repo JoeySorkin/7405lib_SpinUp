@@ -3,6 +3,7 @@
 #include "lib/physics/MaxAccMotion.h"
 #include "lib/physics/NullMotion.h"
 #include "pros/rtos.hpp"
+#include <cstdio>
 
 Drive* Drive::INSTANCE = nullptr;
 

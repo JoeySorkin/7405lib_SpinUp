@@ -2,6 +2,7 @@
 #include "Drive.h"
 #include "Logger.h"
 #include "Robot.h"
+#include "lib/controllers/PID.h"
 #include "lib/geometry/Pose.h"
 #include "lib/geometry/kinState.h"
 #include "lib/physics/NullMotion.h"
@@ -79,7 +80,7 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	sRobot->setOpMode(Robot::DRIVER);
+	// sRobot->setOpMode(Robot::DRIVER);
 	sDrive->setCurrentMotion(std::make_unique<OpControlMotion>());
-	LoggerPtr logger = sLogger->createSource("OpControl");
+	LoggerPtr logger = sLogger->createSource("Profiled motion");
 }

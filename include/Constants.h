@@ -34,9 +34,9 @@ namespace odometers {
 }// namespace odometers
 
 namespace chassis {
-	constexpr double maxVel = 1;
-	constexpr double accel = 1;
-	constexpr double deccel = 1;
+	constexpr double maxVel = 71.795864;
+	constexpr double accel = 87.8518519;
+	constexpr double deccel = 87.8518519;
 
 	constexpr double maxOmega = 1;
 	constexpr double maxAlphaUp = 1;
