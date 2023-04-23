@@ -391,6 +391,7 @@ void carry_auton(){
 	uint32_t startTime = pros::micros();
 	sOdom->reset();
 	sDrive->setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+
 	sFlywheel->setVelocity(2440);
 
 	Pose goal = Pose(-15.801, 116.184);
@@ -427,7 +428,7 @@ void carry_auton(){
 
 	turnAmount = sOdom->getCurrentState().position.headingToPoint(goal) / M_PI * 180;
 	logger->info("Rotate to basket: {}\n", turnAmount);
-	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turnAmount, PID(5.8, 0.02, 4.3, true, 5), false, false, 0.5, 1.9));// tuning
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turnAmount, PID(11.8, 0.003, 10, true, 5), false, false, 0.5, 1.85));// tuning
 	sDrive->waitUntilSettled();
 	sDrive->setCurrentMotion(std::make_unique<NullMotion>());
 	logger->info("Done rotating to basket.\n");
@@ -461,23 +462,27 @@ void carry_auton(){
 	logger->info("Done shooting discs\n");
 	pros::delay(50);
 
-	 Pose endpoint = Pose(85.9, 97.4);
+		 Pose endpoint = Pose(85.9, 97.4);
+//		 Pose endpoint = Pose(88.3, 95.4);
 	logger->info("Turning to line of 3 + moving to roller\n");
 	turnAmount = sOdom->getCurrentState().position.headingToPoint(endpoint) / M_PI * 180;
-	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turnAmount, PID(6.3, 0.004, 5.2, true, 5), false, false, 0.5, 1.7));// tuning
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turnAmount, PID(6.03, 0.002, 6.2, true, 5), false, false, 0.5, 1.5));// tuning
 	sDrive->waitUntilSettled();
 	// 47.5, 84.19, 84.17
 	sIntake->moveVoltage(12000);
 	sDrive->setCurrentMotion(
-	        std::make_unique<ProfiledMotion>(sOdom->getCurrentState().position.distanceTo(endpoint), 44, 60, 60, 0.25));
+	        std::make_unique<ProfiledMotion>(sOdom->getCurrentState().position.distanceTo(endpoint), 50, 60, 60, 0.25));
 	sDrive->waitUntilSettled();
-	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(-90, PID(6.6, 0.002, 6, true, 5), false, false, 0.5, 1.84));// tune this maybe - keep watch
 
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(270, PID(6.6, 0.002, 6, true, 5), false, false, 0.5, 1.45));// tune this maybe - keep watch
+	sDrive->waitUntilSettled();
+	sDrive->setCurrentMotion(std::make_unique<TimedMotion>(1000, -7000));
+	pros::delay(250);
+	sIntake->moveVoltage(10000);
+	pros::delay(250);
+	sIntake->moveVoltage(0);
+	sDrive->setCurrentMotion(std::make_unique<NullMotion>());
 
-
-
-//	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(240, PID(7.3, 0.004, 5.0, true, 5), false, false, 0.5, 1.45));// tuning
-//	sDrive->waitUntilSettled();
 //	Pose preRollerPoint = Pose(92.28,89.23, -118);
 //	sDrive->setCurrentMotion(
 //	        std::make_unique<ProfiledMotion>(-1* sOdom->getCurrentState().position.distanceTo(preRollerPoint), 44, 60, 60, 0.25));

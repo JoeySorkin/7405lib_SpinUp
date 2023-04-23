@@ -11,6 +11,7 @@ PIDTurn::PIDTurn(double targetHeading, PID pid, bool brakeLeft, bool brakeRight,
 
 Motion::MotorVoltages PIDTurn::calculateVoltages(kinState state) {
 	double error_true = util::getShortestAngle(util::toDeg(state.position.getTheta()), targetHeading);
+//	double error_true = targetHeading - state.position.getShortTheta();
 	double error = util::sign(error_true) * std::pow(fabs(error_true),degree);
 
 	pros::motor_brake_mode_e prevBrakeMode = sDrive->getBrakeMode();
@@ -30,10 +31,10 @@ Motion::MotorVoltages PIDTurn::calculateVoltages(kinState state) {
 	double leftPwr = brakeLeft ? 0 : turnPwr;
 	double rightPwr = brakeRight ? 0 : -turnPwr;
 	if((!brakeLeft)){
-		leftPwr = util::sign(leftPwr) * util::lerp(1400, 12000.0, fabs(leftPwr)/12000.0);
+		leftPwr = util::sign(leftPwr) * util::lerp(1400, 12000.0, util::clamp(0.0,1.0,fabs(leftPwr/12000.0)) );
 	}
 	if((!brakeRight)){
-		rightPwr = util::sign(rightPwr) * util::lerp(1400, 12000.0, fabs(rightPwr)/12000.0);
+		rightPwr = util::sign(rightPwr) * util::lerp(1400, 12000.0, util::clamp(0.0,1.0,fabs(rightPwr/12000.0)));
 	}
 	logger->debug("Error: {:.2f} Counter: {} Left Pwr: {} Right Pwr: {}\n", error_true, counter, leftPwr, rightPwr);
 
