@@ -8,6 +8,7 @@ class PIDTurn : public Motion {
 private:
 	double targetHeading;
 	double threshold;
+	double degree;
 	PID pid;
 	int counter;// counter for how long we've been at a pos
 
@@ -18,7 +19,7 @@ private:
 
 
 public:
-	PIDTurn(double targetHeading, PID pid, bool brakeLeft = false, bool brakeRight = false, double threshold = 0.5);
+	PIDTurn(double targetHeading, PID pid, bool brakeLeft = false, bool brakeRight = false, double threshold = 0.5, double degree = 1);
 	MotorVoltages calculateVoltages(kinState state) override;
 	bool isSettled(kinState state) override;
 };

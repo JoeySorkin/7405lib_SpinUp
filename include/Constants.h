@@ -73,9 +73,9 @@ namespace chassis {
 	constexpr double accel = 200; // in/S^2
 	constexpr double deccel = 300;// in/S^2
 
-	constexpr double maxOmega = 1;
-	constexpr double maxAlphaUp = 1;
-	constexpr double maxAlphaDown = 1;
+	constexpr double maxOmega = 10.1273308108;
+	constexpr double maxAlphaUp = maxOmega * 1.7;
+	constexpr double maxAlphaDown = maxOmega * 1.7;
 }// namespace chassis
 #else
 #error Constants for either TEAM_K or TEAM_R have not been selected.

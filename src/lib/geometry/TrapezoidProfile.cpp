@@ -33,6 +33,7 @@ TrapezoidProfile::TrapezoidProfile(double distance, double max_acceleration, dou
 // and just have 4 branches
 double TrapezoidProfile::acceleration(double t) const {
 	if (t <= t_acc) {
+		printf("accmax%.2f\n", acc_max);
 		return acc_max;
 	} else if (t >= (t_acc + t_coast) && t <= (t_acc + t_coast + t_dec)) {
 		return -dec_max;

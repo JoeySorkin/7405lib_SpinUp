@@ -2,6 +2,9 @@
 #include "Constants.h"
 #include "Motion.h"
 #include "lib/geometry/TrapezoidProfile.h"
+#include "Odometry.h"
+#include "lib/geometry/Pose.h"
+#include "Logger.h"
 
 class ProfiledTurn : public Motion {
 private:

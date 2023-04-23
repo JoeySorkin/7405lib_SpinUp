@@ -11,6 +11,7 @@
 #include "lib/physics/PIDMotion.h"
 #include "lib/physics/PIDTurn.h"
 #include "lib/physics/ProfiledMotion.h"
+#include "lib/physics/ProfiledTurn.h"
 #include "lib/physics/TimedMotion.h"
 #include "lib/utils/Math.h"
 #include "pros/motors.h"
@@ -173,7 +174,22 @@ void left_auton(){
 	sLogger->terminate();// just to get rid of logging info for time while making autons*/
 
 }
+void test_auton(){
+	LoggerPtr logger = sLogger->createSource("Right Auto");
+	uint32_t startTime = pros::micros();
+	sOdom->reset();
+
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(130, PID(3, 0.0002, 2, true, 5), false, false, 0.5, 1.7));// tuning
+	sDrive->waitUntilSettled();
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(0, PID(3, 0.0002, 2, true, 5), false, false, 0.5, 1.7));// tuning
+	sDrive->waitUntilSettled();
+	sDrive->setCurrentMotion(std::make_unique<NullMotion>());
+	// tuning profiled motions
+	sDrive->setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+
+}
 void right_auton(){
+	double D_VAR = 6;
 	// -----------------------------------------------------------
 	// right auton
 	LoggerPtr logger = sLogger->createSource("Right Auto");
@@ -183,6 +199,12 @@ void right_auton(){
 
 	// tuning profiled motions
 	sDrive->setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+
+
+	logger->info("DONE. Time took: {}\n", (pros::micros() - startTime) / 1000.0 / 1000.0);
+
+	sDrive->setCurrentMotion(std::make_unique<NullMotion>());// tuning
+	sDrive->setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
 
 	// start of auton
 	//
@@ -216,8 +238,9 @@ void right_auton(){
 	pros::lcd::print(0, "turn amount %.2f", turn_amount);
 	logger->info("Turn Amount To Basket: {}\n", turn_amount);
 	// sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turn_amount, PID(160, 100, 0, true, 3)));// tuning
-	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turn_amount, PID(155, 67, 7, true, 5)));// tuning
-	if (sDrive->waitUntilSettled(2000)) {
+
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turn_amount, PID(6.3, 0.004, 4.8, true, 5), false, false, 0.5, 1.92));// tuning
+	if (sDrive->waitUntilSettled(TIMEOUT_MAX)) {
 		logger->info("Turn to basket done\n");
 	} else {
 		logger->warn("Turn to basket timed out\n");
@@ -285,9 +308,10 @@ void right_auton(){
 	//         std::make_unique<PIDTurn>(sOdom->getCurrentState().position.headingToPoint(endTarget) / M_PI * 180,
 	//                                   PID(225, 100, 0, true, 2)));// tune this maybe - keep watch
 	logger->info("Turn to line of 3\n");
+
 	sDrive->setCurrentMotion(
 	        std::make_unique<PIDTurn>(sOdom->getCurrentState().position.headingToPoint(endTarget) / M_PI * 180,
-	                                  PID(160, 15, 80, true, 5)));// tune this maybe - keep watch
+	                                  PID(6.6, 0.002, D_VAR, true, 5), false, false, 0.5, 1.84));// tune this maybe - keep watch
 	                                                             //	sDrive->waitUntilSettled(2000);
 	sDrive->waitUntilSettled();
 	sIntake->moveVoltage(12000);
@@ -298,7 +322,7 @@ void right_auton(){
 	turn_amount = sOdom->getCurrentState().position.headingToPoint(goal) * 180.0 / M_PI;
 	logger->info("Turn Amount To Basket: {}\n", turn_amount);
 	// sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turn_amount, PID(85, 100, 0, true, 2)));// tuning
-	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turn_amount, PID(165, 5, 80, true, 5)));// tuning
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(turn_amount,  PID(6.3, 0.004, D_VAR, true, 7), false, false, 0.5, 1.62));// tuning
 	                                                                                          //	sDrive->waitUntilSettled(2000);
 	sDrive->waitUntilSettled();
 	sDrive->setCurrentMotion(std::make_unique<NullMotion>());
@@ -332,7 +356,8 @@ void right_auton(){
 	// THEN JUST APPLY backwards drive pressure and do intake
 	logger->info("Moving back to roller\n");
 	// sDrive->setCurrentMotion(std::make_unique<PIDTurn>(-39, PID(88, 120, 0, true, 2)));
-	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(-39, PID(165, 5, 80, true, 5)));
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(-39, PID(4.8, 0.0002, D_VAR, true, 5), false, false, 0.5, 1.85));
+
 	//	sDrive->waitUntilSettled(2000);
 	sDrive->waitUntilSettled();
 	logger->info("Turn done\n");
@@ -480,6 +505,7 @@ void autonomous() {
 void opcontrol() {
 //	left_auton();
 right_auton();
+//test_auton(;
 //	sDrive->setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
 //	sDrive->setCurrentMotion(std::make_unique<OpControlMotion>());
 }
