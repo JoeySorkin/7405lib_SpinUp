@@ -13,7 +13,7 @@ TimedMotion::TimedMotion(uint32_t time, double power) : delay(time), power(power
 
 Motion::MotorVoltages TimedMotion::calculateVoltages(kinState state) {
 	printf("%.2f\n", sOdom->getCurrentState().velocity().theta);
-	return {power, -power};
+	return {power, power};
 }
 
 bool TimedMotion::isSettled(kinState state) {

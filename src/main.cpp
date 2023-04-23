@@ -84,14 +84,13 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	// sRobot->setOpMode(Robot::DRIVER);
-	// sDrive->setCurrentMotion(std::make_unique<OpControlMotion>());
 	sRobot->setOpMode(Robot::AUTONOMOUS);
+	// sDrive->setCurrentMotion(std::make_unique<OpControlMotion>());
 
-	sIntake->moveVoltage(12000);
-	// sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(sOdom->getCurrentState().position.distanceTo(Pose(0.0, 35.0))));
-	// sDrive->waitUntilSettled(2000);
+	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(sOdom->getCurrentState().position.distanceTo(Pose(0.0, 13.0))));
+	pros::delay(250);
+	printf(" FIRING FIRING FIRING FIRING FIRING FIRING FIRING FIRING FIRING FIRING FIRING \n");
+	sShooter->fireScata();
+	sDrive->waitUntilSettled(1500);
 	// sDrive->setCurrentMotion(std::make_unique<PIDTurn>(sOdom->getCurrentState().position.headingToPoint(Pose(10.0, 10.0, 60.0)), PID(200.0, 0.0, 700.0)));
-	
-	LoggerPtr logger = sLogger->createSource("Profiled motion");
 }

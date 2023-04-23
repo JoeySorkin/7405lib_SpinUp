@@ -12,7 +12,7 @@ namespace ports {
 	constexpr int backRightMotor = 16;
 
 	constexpr int scataRotation = 8;
-	constexpr int scataMotor = 4;
+	constexpr int scataMotor = 19;
 
 	constexpr int leftRotation = 0;
 	constexpr int rightRotation = 0;
@@ -45,7 +45,7 @@ namespace chassis {
 
 namespace scata {
 	constexpr int lowPowerThreshold = -300;
-	constexpr int stopThreshold = -130;
+	constexpr int stopThreshold = -160;
 
 	constexpr int lowPower = 7500;
 	constexpr int highPower = 12000;

@@ -3,7 +3,8 @@
 
 TrapezoidProfile::TrapezoidProfile(double distance, double max_acceleration, double max_deceleration,
                                    double max_velocity) {
-	dist = distance;
+	direction = distance < 0 ? -1 : 1;
+	dist = std::abs(distance);
 	acc_max = max_acceleration;
 	dec_max = max_deceleration;
 	v_max = fmin(fmin(sqrt(acc_max * dist), sqrt(dec_max * dist)), max_velocity);
@@ -24,8 +25,6 @@ TrapezoidProfile::TrapezoidProfile(double distance, double max_acceleration, dou
 	d_coast = dist - d_acc - d_dec;
 
 	t_coast = d_coast / v_max;
-
-	direction = dist < 0 ? -1 : 1;
 }
 
 // can get rid of these three functions and combine them into one func

@@ -11,15 +11,16 @@
 
 
 class Shooter{
+    public: 
+        enum class state{READY = 1, FIRING, RECHARGE};
+
     private:
         pros::Motor scataMotor;
         pros::Rotation scataRotation;
         int prevPos;
-        std::atomic<bool> isShooting;
-        std::atomic<bool> isReady;
-        std::atomic<bool> isBoosted;
+        state scataState;
 
-        pros::ADIDigitalOut leftBoostPiston, rightBoostPiston, toggleBoostPiston;
+        pros::ADIDigitalOut toggleBoostPiston;
 
         pros::ADIDigitalOut leftExpansionPiston, rightExpansionPiston;
 
@@ -36,9 +37,7 @@ class Shooter{
             if (!INSTANCE) { INSTANCE = new Shooter(); }
 		    return INSTANCE;
         }
-    
         void initialize();
-        void toggleBoost(bool toggle);
+        state getState();
         void fireScata();
-        void fireExpansion();
 };

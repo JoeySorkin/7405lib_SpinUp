@@ -3,6 +3,7 @@
 #include "Logger.h"
 #include "Odometry.h"
 #include "lib/controllers/PID.h"
+#include "lib/utils/Math.h"
 #include <cstdio>
 
 LoggerPtr ProfiledMotion::logger = sLogger->createSource("ProfiledMotion", 0);
@@ -29,15 +30,19 @@ Motion::MotorVoltages ProfiledMotion::calculateVoltages(kinState state) {
 	constexpr double kV = 12000.0 / chassis::maxVel;
 	constexpr double kA = 12000.0 / 250.0; //random # for now
 	constexpr double kDe = 12000.0 / 650.0;
-	PID posPID = PID(500.0, 0, 0);
+	PID posPID = PID(600.0, 0, 0);
 
-	double FF = kV * targetState.vel;
-	FF += targetState.acc > 0 ? kA * targetState.acc : kDe * targetState.acc;
-
-	double distTraveled = sOdom->getCurrentState().position.distanceTo(startPose);
+	double distTraveled = sOdom->getCurrentState().position.distanceTo(startPose) * util::sign(targetState.pos);
 	double error = -1 * (distTraveled - targetState.pos);
 	double fbPwr = posPID(error);
 
+	double FF = kV * targetState.vel;
+	if(distTraveled > 0){
+		FF += targetState.acc > 0 ? kA * targetState.acc : kDe * targetState.acc;
+	}
+	else {
+		FF += targetState.acc > 0 ? kDe * targetState.acc : kA * targetState.acc;
+	}
 	double power = FF + fbPwr;
 
 	logger->debug(

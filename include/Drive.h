@@ -23,8 +23,6 @@ private:
 	        backLeft{ports::backLeftMotor, true}, backRight{ports::backRightMotor};
 
 	// Motor Control
-	void setVoltageLeft(int16_t voltage);
-	void setVoltageRight(int16_t voltage);
 
 	void setBrakeMode(pros::motor_brake_mode_e_t breakmode);
 	pros::motor_brake_mode_e_t getBrakeMode();
@@ -53,6 +51,8 @@ public:
 	double getLeftPosition();
 	double getRightPosition();
 	void resetPosition();
+	void setVoltageLeft(int16_t voltage);
+	void setVoltageRight(int16_t voltage);
 
 	// Control
 	/**

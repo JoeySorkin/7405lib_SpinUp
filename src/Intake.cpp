@@ -12,7 +12,7 @@ Intake::Intake() : motors(ports::intake) {
 //we need to add an if/else statement to not allow intaking when shooter is not ready. 
 //use the "readyToFire" function inside of shooter to check
 void Intake::initialize() {
-	sController->registerCallback([this]() { moveVoltage(12000); }, [this]() { moveVoltage(0); }, Controller::master,
+	sController->registerCallback([this]() {if (sShooter->getState() == Shooter::state::READY){moveVoltage(12000);}; }, [this]() { moveVoltage(0); }, Controller::master,
 	                              Controller::r1, Controller::hold);
 
 	sController->registerCallback([this]() { moveVoltage(-12000); },
