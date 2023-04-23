@@ -26,14 +26,17 @@ Motion::MotorVoltages PIDTurn::calculateVoltages(kinState state) {
 
 	double turnPwr = pid(error);
 
-	logger->debug("Error: {:.2f} Counter: {} Pwr: {}\n", error_true, counter, turnPwr);
 
 	double leftPwr = brakeLeft ? 0 : turnPwr;
 	double rightPwr = brakeRight ? 0 : -turnPwr;
-	if((!brakeLeft) && (!brakeRight)){
+	if((!brakeLeft)){
 		leftPwr = util::sign(leftPwr) * util::lerp(1400, 12000.0, fabs(leftPwr)/12000.0);
+	}
+	if((!brakeRight)){
 		rightPwr = util::sign(rightPwr) * util::lerp(1400, 12000.0, fabs(rightPwr)/12000.0);
 	}
+	logger->debug("Error: {:.2f} Counter: {} Left Pwr: {} Right Pwr: {}\n", error_true, counter, leftPwr, rightPwr);
+
 	return {leftPwr, rightPwr};
 }
 
