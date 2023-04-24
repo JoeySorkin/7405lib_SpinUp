@@ -1,8 +1,10 @@
-
+#pragma once
 #include "main.h"
 #include <atomic>
-
 #define sRobot Robot::getInstance()
+
+enum class Auton : uint32_t { NONE = 0, LEFT, RIGHT, CARRY };
+
 class Robot {
 public:
 	enum OpMode { DRIVER, AUTONOMOUS };
@@ -16,6 +18,7 @@ private:
 
 	// OpMode
 	std::atomic<OpMode> opmode = AUTONOMOUS;
+	std::atomic<Auton> auton = Auton::NONE;
 
 public:
 	void initialize();
@@ -23,6 +26,10 @@ public:
 	//  OpMode
 	OpMode getOpMode();
 	void setOpMode(OpMode op_mode);
+
+	// Auton
+	Auton getAuton();
+	void setAuton(Auton auton);
 
 	// Singleton Stuff
 	static Robot* getInstance() {

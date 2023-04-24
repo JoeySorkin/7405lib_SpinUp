@@ -21,3 +21,4 @@ temp.errors
 # i made my own makefile thingimajig
 Makefile
 makeCompileDB.sh
+*.csv

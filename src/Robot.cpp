@@ -10,8 +10,8 @@ Robot* Robot::INSTANCE = nullptr;
 void Robot::initialize() {
 	sLogger->initialize("test.txt");
 	pros::delay(50);
-//	 sController->initialize(); //TODO: remove controlling during auton
-	 pros::delay(50);
+	//	 sController->initialize();
+	pros::delay(50);
 	sOdom->initialize();
 	pros::delay(50);
 	sDrive->initialize();
@@ -37,4 +37,12 @@ void Robot::setOpMode(Robot::OpMode op) {
 
 Robot::OpMode Robot::getOpMode() {
 	return opmode.load();
+}
+
+Auton Robot::getAuton() {
+	return auton.load();
+}
+
+void Robot::setAuton(Auton auton) {
+	this->auton.store(auton);
 }
