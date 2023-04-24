@@ -3,6 +3,7 @@
 #include "Odometry.h"
 #include "lib/physics/MaxAccMotion.h"
 #include "lib/physics/NullMotion.h"
+#include "pros/motors.h"
 #include "pros/rtos.hpp"
 #include <cstdio>
 
@@ -117,4 +118,13 @@ void Drive::resetPosition() {
 	middleRight.set_zero_position(0);
 	frontLeft.set_zero_position(0);
 	frontRight.set_zero_position(0);
+}
+
+void Drive::setBrakeMode(pros::motor_brake_mode_e_t brakemode){
+	backLeft.set_brake_mode(brakemode);
+	backRight.set_brake_mode(brakemode);
+	middleLeft.set_brake_mode(brakemode);
+	middleRight.set_brake_mode(brakemode);
+	frontLeft.set_brake_mode(brakemode);
+	frontRight.set_brake_mode(brakemode);
 }

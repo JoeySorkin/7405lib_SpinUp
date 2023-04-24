@@ -69,6 +69,7 @@ extern "C"
     void disabled(void);
     void competition_initialize(void);
     void opcontrol(void);
+    void rightAuton();
 #ifdef __cplusplus
 }
 #endif

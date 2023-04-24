@@ -23,8 +23,6 @@ private:
 	        backLeft{ports::backLeftMotor, true}, backRight{ports::backRightMotor};
 
 	// Motor Control
-
-	void setBrakeMode(pros::motor_brake_mode_e_t breakmode);
 	pros::motor_brake_mode_e_t getBrakeMode();
 
 	// General Stuff
@@ -59,4 +57,5 @@ public:
 	 * @return returns true if settled, false if timed out
 	 */
 	bool waitUntilSettled(uint32_t timeout = TIMEOUT_MAX);
+	void setBrakeMode(pros::motor_brake_mode_e_t brakemode);
 };

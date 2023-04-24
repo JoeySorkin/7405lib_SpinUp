@@ -12,7 +12,9 @@
 #include "lib/physics/PIDTurn.h"
 #include "lib/physics/ProfiledMotion.h"
 #include "lib/physics/TimedMotion.h"
+#include "pros/motors.h"
 #include "pros/rtos.hpp"
+#include <cmath>
 #include <cstdio>
 #include <memory>
 #include "Shooter.h"
@@ -63,11 +65,51 @@ void competition_initialize() {}
  */
 void autonomous() {
 	LoggerPtr logger = sLogger->createSource("AUTONOMOUS");
+}
 
-	while (true) {
-		logger->info("AUTONOMOUS LOOP\n");
-		pros::delay(100);
-	}
+void rightAuton(){
+	sRobot->setOpMode(Robot::AUTONOMOUS);
+	sIntake->moveVoltage(12000);
+	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(20.0));
+	sDrive->waitUntilSettled();
+
+	Pose target = Pose(30.65, 73.9424, 0.0); //1.77
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(
+		(180/M_PI) * (sOdom->getCurrentState().position.headingToPoint(target)), 
+		PID(500, 50.0, 800, true, 5)));
+	sDrive->waitUntilSettled();
+	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(-7.0));
+	sDrive->waitUntilSettled();
+	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(10.0));
+	pros::delay(300);
+	sShooter->fireScata();
+	sDrive->waitUntilSettled();
+	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(-3.0));
+	sDrive->waitUntilSettled();
+
+	Pose threeStack = Pose(-24.6176, 41.9041); //0.6322
+	printf("target heading %.2f\n",(180/M_PI) * (sOdom->getCurrentState().position.headingToPoint(threeStack)));
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(
+		(180/M_PI) * (sOdom->getCurrentState().position.headingToPoint(threeStack)), 
+		PID(300, 100.0, 1200, true, 5)));
+	pros::delay(2000);
+	sDrive->waitUntilSettled();
+	printf("target position: %.2f \n", sOdom->getCurrentState().position.distanceTo(threeStack));
+	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(sOdom->getCurrentState().position.distanceTo(threeStack)));
+	sDrive->waitUntilSettled();
+
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(
+		(180/M_PI) * (sOdom->getCurrentState().position.headingToPoint(target)), 
+		PID(300, 100.0, 1200, true, 5)));
+	sDrive->waitUntilSettled();
+	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(-3.0));
+	sDrive->waitUntilSettled();
+	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(6.0));
+	pros::delay(150);
+	sShooter->fireScata();
+	sDrive->waitUntilSettled();
+
+	Pose roller = Pose(6.3, -13.5);
 }
 
 /**
@@ -83,14 +125,7 @@ void autonomous() {
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-void opcontrol() {
-	sRobot->setOpMode(Robot::AUTONOMOUS);
-	// sDrive->setCurrentMotion(std::make_unique<OpControlMotion>());
-
-	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(sOdom->getCurrentState().position.distanceTo(Pose(0.0, 13.0))));
-	pros::delay(250);
-	printf(" FIRING FIRING FIRING FIRING FIRING FIRING FIRING FIRING FIRING FIRING FIRING \n");
-	sShooter->fireScata();
-	sDrive->waitUntilSettled(1500);
-	// sDrive->setCurrentMotion(std::make_unique<PIDTurn>(sOdom->getCurrentState().position.headingToPoint(Pose(10.0, 10.0, 60.0)), PID(200.0, 0.0, 700.0)));
+void opcontrol() { 
+	sRobot->setOpMode(Robot::DRIVER);
+	sDrive->setCurrentMotion(std::make_unique<OpControlMotion>());
 }
