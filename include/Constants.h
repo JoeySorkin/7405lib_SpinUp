@@ -44,8 +44,8 @@ namespace chassis {
 }// namespace chassis
 
 namespace scata {
-	constexpr int lowPowerThreshold = -300;
-	constexpr int stopThreshold = -160;
+	constexpr int lowPowerThreshold = -500;
+	constexpr int stopThreshold = -250;
 
 	constexpr int lowPower = 7500;
 	constexpr int highPower = 12000;

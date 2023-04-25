@@ -44,6 +44,7 @@ void Shooter::shooterRunner(void* params){
         }
 
         prevPos = scataRotation.get_position();
+        printf("scata:%i\n", scataRotation.get_position());
 
         pros::delay(20);
     }

@@ -17,6 +17,7 @@
 #include "pros/rtos.hpp"
 #include <cmath>
 #include <cstdio>
+#include <ctime>
 #include <memory>
 #include "Shooter.h"
 #include "Intake.h"
@@ -60,43 +61,61 @@ void rightAuton(){
 	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(20.0));
 	sDrive->waitUntilSettled();
 
-	Pose target = Pose(30.65, 73.9424, 0.0); //1.77
+	Pose goal = Pose(40.0, 93.146); //1.77
 	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(
-		(180/M_PI) * (sOdom->getCurrentState().position.headingToPoint(target)), 
+		(180/M_PI) * (sOdom->getCurrentState().position.headingToPoint(goal)), 
 		PID(500, 50.0, 800, true, 5)));
 	sDrive->waitUntilSettled();
 	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(-7.0));
 	sDrive->waitUntilSettled();
 	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(10.0));
-	pros::delay(300);
+	pros::delay(250);
 	sShooter->fireScata();
 	sDrive->waitUntilSettled();
 	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(-3.0));
 	sDrive->waitUntilSettled();
 
-	Pose threeStack = Pose(-24.6176, 41.9041); //0.6322
-	printf("target heading %.2f\n",(180/M_PI) * (sOdom->getCurrentState().position.headingToPoint(threeStack)));
+	Pose threeStack = Pose(-24.6176, 42.9041); //0.6322	
 	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(
-		(180/M_PI) * (sOdom->getCurrentState().position.headingToPoint(threeStack)), 
-		PID(300, 100.0, 1200, true, 5)));
-	pros::delay(2000);
+		(180.0/M_PI) * (sOdom->getCurrentState().position.headingToPoint(threeStack)), 
+		PID(300.0, 50.0, 1200.0, true, 5.0)));
+	pros::delay(1000);
 	sDrive->waitUntilSettled();
-	printf("target position: %.2f \n", sOdom->getCurrentState().position.distanceTo(threeStack));
 	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(sOdom->getCurrentState().position.distanceTo(threeStack)));
 	sDrive->waitUntilSettled();
+	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(-10.0));
+	sDrive->waitUntilSettled();
 
 	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(
-		(180/M_PI) * (sOdom->getCurrentState().position.headingToPoint(target)), 
-		PID(300, 100.0, 1200, true, 5)));
-	sDrive->waitUntilSettled();
-	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(-3.0));
+		(180.0/M_PI) * (sOdom->getCurrentState().position.headingToPoint(goal)), 
+		PID(300.0, 100.0, 1200.0, true, 5)));
 	sDrive->waitUntilSettled();
 	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(6.0));
-	pros::delay(150);
+	pros::delay(120);
 	sShooter->fireScata();
 	sDrive->waitUntilSettled();
+	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(-4.0));
+	sDrive->waitUntilSettled();
+	sIntake->moveVoltage(0);
 
-	Pose roller = Pose(6.3, -13.5);
+	Pose roller = Pose(16.0, 2.0);
+	printf("roller target heading: %.2f\n", 180 - ((180/M_PI) * (sOdom->getCurrentState().position.headingToPoint(roller))));
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(
+		 180 + (180/M_PI) * (sOdom->getCurrentState().position.headingToPoint(roller)),
+		PID(800.0, 50.0, 1200.0, true, 5.0)));
+	sDrive->waitUntilSettled();
+	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(5.0));
+	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(-sOdom->getCurrentState().position.distanceTo(roller)));
+	sDrive->waitUntilSettled();
+	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(
+		0.0,
+		PID(800.0, 50.0, 1200.0, true, 5.0)));
+	sDrive->waitUntilSettled();
+	sDrive->setCurrentMotion(std::make_unique<TimedMotion>(300, -6000));
+	sDrive->waitUntilSettled();
+	sIntake->moveVoltage(12000);
+	pros::delay(100);
+	sIntake->moveVoltage(0);
 }
 
 /**
@@ -113,27 +132,28 @@ void rightAuton(){
 void autonomous() {
 	LoggerPtr logger = sLogger->createSource("AUTONOMOUS");
 	sRobot->setOpMode(Robot::AUTONOMOUS);
-	switch (Display::getAutonMode()) {
-    case Display::ALPHA:
-      // nothing
-      break;
-    case Display::BETA:
-      // Right side / Red
-    //   leftAuton();
-      break;
-    case Display::GAMMA:
-      // left side / blue
-      rightAuton();
-      break;
-    case Display::DELTA:
-      //add another auton if you want
-    //   carryAuton();
-      break;
-    case Display::OMEGA:
-      // eeeee
-    //   skillsAuton();
-      break;
-  }
+// 	switch (Display::getAutonMode()) {
+//     case Display::ALPHA:
+//       // nothing
+//       break;
+//     case Display::BETA:
+//       // Right side / Red
+//     //   leftAuton();
+//       break;
+//     case Display::GAMMA:
+//       // left side / blue
+//       rightAuton();
+//       break;
+//     case Display::DELTA:
+//       //add another auton if you want
+//     //   carryAuton();
+//       break;
+//     case Display::OMEGA:
+//       // eeeee
+//     //   skillsAuton();
+//       break;
+//   }
+
 }
 
 /**
@@ -150,6 +170,6 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() { 
-	sRobot->setOpMode(Robot::DRIVER);
-	sDrive->setCurrentMotion(std::make_unique<OpControlMotion>());
+	sRobot->setOpMode(Robot::AUTONOMOUS);
+	rightAuton();
 }
