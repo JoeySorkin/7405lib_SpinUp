@@ -3,6 +3,7 @@
 #include "Logger.h"
 #include "Odometry.h"
 #include "Robot.h"
+#include "Display.h"
 #include "lib/controllers/PID.h"
 #include "lib/geometry/Pose.h"
 #include "lib/geometry/kinState.h"
@@ -28,6 +29,7 @@
  */
 void initialize() {
 	pros::lcd::initialize();
+	// Display::guiInitialize();
 	sRobot->initialize();
 }
 
@@ -51,21 +53,6 @@ void disabled() {
  * starts.
  */
 void competition_initialize() {}
-
-/**
- * Runs the user autonomous code. This function will be started in its own task
- * with the default priority and stack size whenever the robot is enabled via
- * the Field Management System or the VEX Competition Switch in the autonomous
- * mode. Alternatively, this function may be called in initialize or opcontrol
- * for non-competition testing purposes.
- *
- * If the robot is disabled or communications is lost, the autonomous task
- * will be stopped. Re-enabling the robot will restart the task, not re-start it
- * from where it left off.
- */
-void autonomous() {
-	LoggerPtr logger = sLogger->createSource("AUTONOMOUS");
-}
 
 void rightAuton(){
 	sRobot->setOpMode(Robot::AUTONOMOUS);
@@ -110,6 +97,43 @@ void rightAuton(){
 	sDrive->waitUntilSettled();
 
 	Pose roller = Pose(6.3, -13.5);
+}
+
+/**
+ * Runs the user autonomous code. This function will be started in its own task
+ * with the default priority and stack size whenever the robot is enabled via
+ * the Field Management System or the VEX Competition Switch in the autonomous
+ * mode. Alternatively, this function may be called in initialize or opcontrol
+ * for non-competition testing purposes.
+ *
+ * If the robot is disabled or communications is lost, the autonomous task
+ * will be stopped. Re-enabling the robot will restart the task, not re-start it
+ * from where it left off.
+ */
+void autonomous() {
+	LoggerPtr logger = sLogger->createSource("AUTONOMOUS");
+	sRobot->setOpMode(Robot::AUTONOMOUS);
+	switch (Display::getAutonMode()) {
+    case Display::ALPHA:
+      // nothing
+      break;
+    case Display::BETA:
+      // Right side / Red
+    //   leftAuton();
+      break;
+    case Display::GAMMA:
+      // left side / blue
+      rightAuton();
+      break;
+    case Display::DELTA:
+      //add another auton if you want
+    //   carryAuton();
+      break;
+    case Display::OMEGA:
+      // eeeee
+    //   skillsAuton();
+      break;
+  }
 }
 
 /**
