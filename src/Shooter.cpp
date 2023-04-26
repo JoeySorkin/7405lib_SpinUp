@@ -26,20 +26,18 @@ void Shooter::initialize(){
 
     // sController->registerCallback([this](){if(expansionMode){leftExpansionPiston.set_value(true); rightExpansionPiston.set_value(true);}}, [](){}, Controller::master, Controller::up, Controller::rising);
 
-    sController->registerCallback([this](){emergencyOverride += 500;}, [this](){if (emergencyOverride >= 0){emergencyOverride -= 20;}}, Controller::master, Controller::a, Controller::rising);
+    sController->registerCallback([this](){emergencyOverride += 500; if(emergencyOverride > 501){pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "........");}}, [this](){}, Controller::master, Controller::a, Controller::rising);
 }
 
 void Shooter::shooterRunner(void* params){
     while (true){
         if(emergencyOverride > 501){
-            pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "-");
             manualScata();
         }
         else{
             automaticScata();
         }  
         prevPos = scataRotation.get_position();
-        printf("expansioncount:%i\n", expansionModeCount);
 
         if(expansionModeCount >= 0) {expansionModeCount -= 20;}
 
@@ -48,7 +46,7 @@ void Shooter::shooterRunner(void* params){
             if(expansionModeCount > 1000)
             {
                 expansionMode = true;
-                pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "---");
+                pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, ".-.-.-.-"); 
             }
             else
             {
@@ -99,6 +97,7 @@ void Shooter::fireScata(){
 }
 
 void Shooter::manualScata(){
+
     if (sController->getDigital(Controller::l1)){
        scataMotor.move_voltage(12000);
     }
@@ -128,6 +127,10 @@ void Shooter::automaticScata(){
         if (sController->getDigital(Controller::l1) && scataState == state::READY){
             scataState = state::FIRING;
         }
+    }
+    if(emergencyOverride >= 0)
+    {
+        emergencyOverride -= 20;
     }
 }
 

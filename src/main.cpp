@@ -203,27 +203,27 @@ void carryAuton(){
 void autonomous() {
 	LoggerPtr logger = sLogger->createSource("AUTONOMOUS");
 	sRobot->setOpMode(Robot::AUTONOMOUS);
-// 	switch (Display::getAutonMode()) {
-//     case Display::ALPHA:
-//       // nothing
-//       break;
-//     case Display::BETA:
-//       // Right side / Red
-//     //   leftAuton();
-//       break;
-//     case Display::GAMMA:
-//       // left side / blue
-//       rightAuton();
-//       break;
-//     case Display::DELTA:
-//       //add another auton if you want
-//     //   carryAuton();
-//       break;
-//     case Display::OMEGA:
-//       // eeeee
-//     //   skillsAuton();
-//       break;
-//   }
+	switch (Display::getAutonMode()) {
+    case Display::ALPHA:
+      // nothing
+      break;
+    case Display::BETA:
+      // Right side / Red
+    //   leftAuton();
+      break;
+    case Display::GAMMA:
+      // left side / blue
+      rightAuton();
+      break;
+    case Display::DELTA:
+      //add another auton if you want
+    //   carryAuton();
+      break;
+    case Display::OMEGA:
+      // eeeee
+    //   skillsAuton();
+      break;
+  }
 
 }
 
