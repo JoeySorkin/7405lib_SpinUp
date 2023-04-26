@@ -23,6 +23,7 @@ Odometry::Odometry()
 #ifdef TEAM_K
 	rightWheel.reverse();
 #endif
+pros::delay(100);
 }
 
 
@@ -112,4 +113,14 @@ kinState Odometry::getCurrentState() {
 	kinState p = curr_state;
 	stateMutex.give();
 	return p;
+}
+
+void Odometry::reset(){
+	stateMutex.take(TIMEOUT_MAX);
+	backWheel.reset_position();
+	leftWheel.reset_position();
+	rightWheel.reset_position();
+	curr_state = kinState({0,0,0}, {0,0,0}, {0,0,0});
+	prev_b = 0; prev_l = 0; prev_r = 0;
+	stateMutex.give();
 }

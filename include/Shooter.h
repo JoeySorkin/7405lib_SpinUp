@@ -6,13 +6,14 @@
 #include "Constants.h"
 #include "pros/rtos.h"
 #include <atomic>
+#include "Intake.h"
 
 #define sShooter Shooter::getInstance()
 
 
 class Shooter{
     public: 
-        enum class state{READY = 1, FIRING, RECHARGE};
+        enum class state{READY = 1, FIRING, RECHARGELOW, RECHARGEHIGH};
 
     private:
         pros::Motor scataMotor;

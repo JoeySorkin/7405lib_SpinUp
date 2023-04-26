@@ -56,6 +56,7 @@ void disabled() {
 void competition_initialize() {}
 
 void leftAuton(){
+	sOdom->reset();
 	sDrive->setCurrentMotion(std::make_unique<TimedMotion>(1000, -4500));
 	sDrive->waitUntilSettled(1000);
 	sIntake->moveVoltage(12000);
@@ -64,12 +65,13 @@ void leftAuton(){
 }
 
 void rightAuton(){
+	sOdom->reset();
 	sRobot->setOpMode(Robot::AUTONOMOUS);
 	sIntake->moveVoltage(12000);
 	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(20.0));
 	sDrive->waitUntilSettled(1500);
 
-	Pose goal = Pose(40.0, 93.146); //1.77
+	Pose goal = Pose(35.0, 90.146); //1.77
 	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(
 		(180/M_PI) * (sOdom->getCurrentState().position.headingToPoint(goal)), 
 		PID(500, 50.0, 800, true, 5)));
@@ -83,13 +85,13 @@ void rightAuton(){
 	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(-8.0));
 	sDrive->waitUntilSettled(1000);
 
-	Pose threeStack = Pose(-24.6176, 44.9041); //0.6322	
+	Pose threeStack = Pose(-21.6176, 45.9041); //0.6322	
 	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(
 		(180.0/M_PI) * (sOdom->getCurrentState().position.headingToPoint(threeStack)), 
 		PID(300.0, 50.0, 1200.0, true, 5.0)));
 	pros::delay(600);
 	sDrive->waitUntilSettled(1500);
-	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(sOdom->getCurrentState().position.distanceTo(threeStack)));
+	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(sOdom->getCurrentState().position.distanceTo(threeStack), 30.0));
 	sDrive->waitUntilSettled(1500);
 	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(-10.0));
 	sDrive->waitUntilSettled(1000);
@@ -99,14 +101,14 @@ void rightAuton(){
 		PID(300.0, 60.0, 1200.0, true, 5)));
 	sDrive->waitUntilSettled(1500);
 	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(6.0));
-	pros::delay(140);
+	pros::delay(120);
 	sShooter->fireScata();
 	sDrive->waitUntilSettled(1000);
 	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(-6.0));
 	sDrive->waitUntilSettled(1000);
 	sIntake->moveVoltage(0);
 
-	Pose roller = Pose(19.0, 5.0);
+	Pose roller = Pose(18.0, 4.0);
 	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(
 		 180 + (180/M_PI) * (sOdom->getCurrentState().position.headingToPoint(roller)),
 		PID(800.0, 50.0, 1200.0, true, 5.0)));
@@ -125,12 +127,13 @@ void rightAuton(){
 }
 
 void carryAuton(){
+	sOdom->reset();
 	sRobot->setOpMode(Robot::AUTONOMOUS);
 	sIntake->moveVoltage(12000);
 	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(20.0));
 	sDrive->waitUntilSettled(1500);
 
-	Pose goal = Pose(40.0, 93.146); //1.77
+	Pose goal = Pose(39.0, 90.146); //40.0, 93.146
 	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(
 		(180/M_PI) * (sOdom->getCurrentState().position.headingToPoint(goal)), 
 		PID(500, 50.0, 800, true, 5)));
@@ -232,8 +235,8 @@ void autonomous() {
 //     //   skillsAuton();
 //       break;
 //   }
-	leftAuton();
-	// rightAuton();
+	// leftAuton();
+	rightAuton();
 }
 
 /**

@@ -32,4 +32,5 @@ public:
 
 	kinState getCurrentState();
 	void initialize();
+	void reset();
 };

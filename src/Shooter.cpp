@@ -108,16 +108,17 @@ void Shooter::manualScata(){
 
 void Shooter::automaticScata(){
     if((scataState == state::FIRING) && (std::abs(scataRotation.get_position()-prevPos) < 500)){
+            sIntake->moveVoltage(-12000);
             scataMotor.move_voltage(12000);
         }
     else {
         if (scataRotation.get_position() < scata::lowPowerThreshold){
             scataMotor.move_voltage(scata::highPower);
-            scataState = state::RECHARGE;
+            scataState = state::RECHARGEHIGH;
         }
         else if (scataRotation.get_position() < scata::stopThreshold){
             scataMotor.move_voltage(scata::lowPower);
-            scataState = state::RECHARGE;
+            scataState = state::RECHARGELOW;
         }
         else {
             scataMotor.move_voltage(0);
@@ -125,6 +126,7 @@ void Shooter::automaticScata(){
         }
 
         if (sController->getDigital(Controller::l1) && scataState == state::READY){
+            sIntake->moveVoltage(-12000);
             scataState = state::FIRING;
         }
     }
