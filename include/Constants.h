@@ -18,8 +18,8 @@ namespace ports {
 	constexpr int rightRotation = 0;
 	constexpr int backRotation = 7;
 
-	constexpr int rightExpansion = 0;
-	constexpr int leftExpansion = 0;
+	constexpr char rightExpansion = 'H';
+	constexpr char leftExpansion = 'E';
 
 constexpr std::initializer_list<std::int8_t> intake = {6};
 }// namespace ports

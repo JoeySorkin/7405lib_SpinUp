@@ -18,6 +18,7 @@ class Shooter{
         pros::Motor scataMotor;
         pros::Rotation scataRotation;
         int prevPos;
+        std::atomic<int> emergencyOverride;      
         state scataState;
 
         pros::ADIDigitalOut toggleBoostPiston;
@@ -27,6 +28,12 @@ class Shooter{
         pros::task_t shooter_task;
         static Shooter* INSTANCE;
         void shooterRunner(void* params);
+        void automaticScata();
+        void manualScata();
+        bool expansionMode;
+        bool boost;
+        int expansionModeCount = 0;
+
 
         Shooter();
         Shooter(const Shooter&) = delete;
@@ -40,4 +47,5 @@ class Shooter{
         void initialize();
         state getState();
         void fireScata();
+        void switchBandBoost();
 };
