@@ -70,6 +70,7 @@ extern "C"
     void competition_initialize(void);
     void opcontrol(void);
     void rightAuton();
+    void carryAuton();
 #ifdef __cplusplus
 }
 #endif
