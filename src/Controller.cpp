@@ -23,11 +23,6 @@ void Controller::initialize() {
 
 void Controller::backend() {
 	while (true) {
-
-		// TODO: just add check for when we're in auton or in opcontrol
-		// and in auton, just don't update button states - or maybe just reset button states to being false and then
-		// sleeping until something changes
-
 		// poll for the new controller states
 		// and call corresponding callbacks when the conditions for a callback is met
 		if (pros::competition::is_autonomous() || pros::competition::is_disabled()) {
