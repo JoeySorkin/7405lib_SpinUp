@@ -26,7 +26,7 @@ void Shooter::initialize(){
 
     // sController->registerCallback([this](){if(expansionMode){leftExpansionPiston.set_value(true); rightExpansionPiston.set_value(true);}}, [](){}, Controller::master, Controller::up, Controller::rising);
 
-    sController->registerCallback([this](){emergencyOverride += 500; if(emergencyOverride > 501){pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "........");}}, [this](){}, Controller::master, Controller::a, Controller::rising);
+    sController->registerCallback([this](){emergencyOverride += 500; if(emergencyOverride > 501){pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "....");}}, [this](){}, Controller::master, Controller::a, Controller::rising);
 }
 
 void Shooter::shooterRunner(void* params){
@@ -43,14 +43,14 @@ void Shooter::shooterRunner(void* params){
 
         if(pros::c::controller_get_digital_new_press(pros::E_CONTROLLER_MASTER, pros::E_CONTROLLER_DIGITAL_X))
         {
-            if(expansionModeCount > 1000)
+            if(expansionModeCount > 900)
             {
                 expansionMode = true;
-                pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, ".-.-.-.-"); 
+                pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "----"); 
             }
             else
             {
-                expansionModeCount += 1000;
+                expansionModeCount += 1250;
             }
         }
 
