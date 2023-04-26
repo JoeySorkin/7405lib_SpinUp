@@ -55,6 +55,14 @@ void disabled() {
  */
 void competition_initialize() {}
 
+void leftAuton(){
+	sDrive->setCurrentMotion(std::make_unique<TimedMotion>(1000, -4500));
+	sDrive->waitUntilSettled(1000);
+	sIntake->moveVoltage(12000);
+	pros::delay(200);
+	sIntake->moveVoltage(0);	
+}
+
 void rightAuton(){
 	sRobot->setOpMode(Robot::AUTONOMOUS);
 	sIntake->moveVoltage(12000);
@@ -110,7 +118,7 @@ void rightAuton(){
 		PID(800.0, 50.0, 1200.0, true, 5.0)));
 	sDrive->waitUntilSettled(1500);
 	sDrive->setCurrentMotion(std::make_unique<TimedMotion>(1000, -4500));
-	sDrive->waitUntilSettled(1500);
+	sDrive->waitUntilSettled(1000);
 	sIntake->moveVoltage(12000);
 	pros::delay(200);
 	sIntake->moveVoltage(0);
@@ -203,14 +211,13 @@ void carryAuton(){
 void autonomous() {
 	LoggerPtr logger = sLogger->createSource("AUTONOMOUS");
 	sRobot->setOpMode(Robot::AUTONOMOUS);
-	rightAuton();
 // 	switch (Display::getAutonMode()) {
 //     case Display::ALPHA:
 //       // nothing
 //       break;
 //     case Display::BETA:
 //       // Right side / Red
-//     //   leftAuton();
+//       leftAuton();
 //       break;
 //     case Display::GAMMA:
 //       // left side / blue
@@ -225,7 +232,8 @@ void autonomous() {
 //     //   skillsAuton();
 //       break;
 //   }
-
+	leftAuton();
+	// rightAuton();
 }
 
 /**
@@ -242,7 +250,6 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() { 
-	// rightAuton();
 	sDrive->setCurrentMotion(std::make_unique<OpControlMotion>());
 	sRobot->setOpMode(Robot::DRIVER);
 	sShooter->switchBandBoost();

@@ -26,7 +26,7 @@ void Shooter::initialize(){
 
     // sController->registerCallback([this](){if(expansionMode){leftExpansionPiston.set_value(true); rightExpansionPiston.set_value(true);}}, [](){}, Controller::master, Controller::up, Controller::rising);
 
-    sController->registerCallback([this](){emergencyOverride += 500; if(emergencyOverride > 501){pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "....");}}, [this](){}, Controller::master, Controller::a, Controller::rising);
+    sController->registerCallback([this](){emergencyOverride += 500; if(emergencyOverride > 501){pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "....");}}, [this](){}, Controller::master, Controller::b, Controller::rising);
 }
 
 void Shooter::shooterRunner(void* params){
