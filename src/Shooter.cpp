@@ -11,7 +11,7 @@ Shooter* Shooter::INSTANCE = nullptr;
 Shooter::Shooter()
     : scataMotor(ports::scataMotor, true), scataRotation(ports::scataRotation, true), rightExpansionPiston({21, 'H'}, false),
     leftExpansionPiston({21, 'E'}, false), toggleBoostPiston({21, 'A'}, false), scataState(state::READY), expansionMode(false), 
-    expansionModeCount(0), emergencyOverride(0), boost(true){}
+    emergencyOverride(0), boost(true){}
 
 void Shooter::initialize(){
     scataRotation.reset_position();
@@ -39,19 +39,10 @@ void Shooter::shooterRunner(void* params){
         }  
         prevPos = scataRotation.get_position();
 
-        if(expansionModeCount >= 0) {expansionModeCount -= 20;}
-
         if(pros::c::controller_get_digital_new_press(pros::E_CONTROLLER_MASTER, pros::E_CONTROLLER_DIGITAL_X))
         {
-            if(expansionModeCount > 900)
-            {
-                expansionMode = true;
-                pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "----"); 
-            }
-            else
-            {
-                expansionModeCount += 1250;
-            }
+            expansionMode = true;
+            pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, "----"); 
         }
 
         if(pros::c::controller_get_digital_new_press(pros::E_CONTROLLER_MASTER, pros::E_CONTROLLER_DIGITAL_LEFT))
@@ -99,16 +90,16 @@ void Shooter::fireScata(){
 void Shooter::manualScata(){
 
     if (sController->getDigital(Controller::l1)){
-       scataMotor.move_voltage(12000);
+        scataMotor.move_voltage(12000);
     }
     else{
+
         scataMotor.move_voltage(0);
     }
 }
 
 void Shooter::automaticScata(){
     if((scataState == state::FIRING) && (std::abs(scataRotation.get_position()-prevPos) < 500)){
-            sIntake->moveVoltage(-12000);
             scataMotor.move_voltage(12000);
         }
     else {

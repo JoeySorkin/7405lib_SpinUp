@@ -133,7 +133,7 @@ void carryAuton(){
 	sDrive->setCurrentMotion(std::make_unique<ProfiledMotion>(20.0));
 	sDrive->waitUntilSettled(1500);
 
-	Pose goal = Pose(39.0, 90.146); //40.0, 93.146
+	Pose goal = Pose(45.0, 90.146); //40.0, 93.146
 	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(
 		(180/M_PI) * (sOdom->getCurrentState().position.headingToPoint(goal)), 
 		PID(500, 50.0, 800, true, 5)));
@@ -170,7 +170,7 @@ void carryAuton(){
 	sDrive->waitUntilSettled(1000);
 	sIntake->moveVoltage(0);
 
-	Pose roller = Pose(19.0, 5.0);
+	Pose roller = Pose(20.0, 5.0);
 	sDrive->setCurrentMotion(std::make_unique<PIDTurn>(
 		 180 + (180/M_PI) * (sOdom->getCurrentState().position.headingToPoint(roller)),
 		PID(800.0, 50.0, 1200.0, true, 5.0)));

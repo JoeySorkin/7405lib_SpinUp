@@ -33,8 +33,6 @@ class Shooter{
         void manualScata();
         bool expansionMode;
         bool boost;
-        int expansionModeCount = 0;
-
 
         Shooter();
         Shooter(const Shooter&) = delete;
