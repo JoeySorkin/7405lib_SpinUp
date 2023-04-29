@@ -10,11 +10,19 @@ Intake::Intake() : motors(ports::intake) {
 }
 
 void Intake::initialize() {
-	sController->registerCallback([this]() { moveVoltage(12000); }, [this]() { if (!sFlywheel->triple_shoot_flag.load()) {moveVoltage(0);} }, Controller::master,
-	                              Controller::r1, Controller::hold);
+	sController->registerCallback([this]() { moveVoltage(12000); },
+	                              [this]() {
+		                              if (!sFlywheel->triple_shoot_flag.load()) { moveVoltage(0); }
+	                              },
+	                              Controller::master, Controller::r1, Controller::hold);
 
-	sController->registerCallback([this]() { moveVoltage(-12000); }, [this]() {if (!sFlywheel->triple_shoot_flag.load() && motors.at(0).get_power() < 0) {moveVoltage(0);} }, Controller::master,
-	                              Controller::y, Controller::hold);
+	sController->registerCallback([this]() { moveVoltage(-12000); },
+	                              [this]() {
+		                              if (!sFlywheel->triple_shoot_flag.load() && motors.at(0).get_power() < 0) {
+			                              moveVoltage(0);
+		                              }
+	                              },
+	                              Controller::master, Controller::y, Controller::hold);
 
 	// sController->registerCallback([this]() { moveVoltage(-12000); },
 	//                               [this]() {

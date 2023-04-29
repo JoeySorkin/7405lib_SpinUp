@@ -1,7 +1,8 @@
 #pragma once
 #include "Motion.h"
 
-// this entire motion just uses everything in degrees cause its easier
+// motion is for collecting test data of drive
+// data printing is done in the drive
 class MaxAccMotion : public Motion {
 public:
 	MotorVoltages calculateVoltages(kinState state) override;

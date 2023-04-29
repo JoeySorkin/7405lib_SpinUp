@@ -8,27 +8,41 @@
 
 #define sLogger Logger::getInstance()
 
-
 class LogSource;
 using LoggerPtr = std::shared_ptr<LogSource>;
 
 // To add extra 🌶️ to the logger
 // Naming convention is a little off but whatever
 namespace LoggerColor {
-	extern const char* RED;
-	extern const char* GREEN;
-	extern const char* YELLOW;
-	extern const char* BLUE;
-	extern const char* MAGENTA;
-	extern const char* CYAN;
-	extern const char* WHITE;
-	extern const char* BRIGHT_RED;
-	extern const char* BRIGHT_GREEN;
-	extern const char* BRIGHT_YELLOW;
-	extern const char* BRIGHT_BLUE;
-	extern const char* BRIGHT_MAGENTA;
-	extern const char* BRIGHT_CYAN;
-	extern const char* BRIGHT_WHITE;
+	// extern const char* RED;
+	// extern const char* GREEN;
+	// extern const char* YELLOW;
+	// extern const char* BLUE;
+	// extern const char* MAGENTA;
+	// extern const char* CYAN;
+	// extern const char* WHITE;
+	// extern const char* BRIGHT_RED;
+	// extern const char* BRIGHT_GREEN;
+	// extern const char* BRIGHT_YELLOW;
+	// extern const char* BRIGHT_BLUE;
+	// extern const char* BRIGHT_MAGENTA;
+	// extern const char* BRIGHT_CYAN;
+	// extern const char* BRIGHT_WHITE;
+
+	extern const char* RED_BG;
+	extern const char* GREEN_BG;
+	extern const char* YELLOW_BG;
+	extern const char* BLUE_BG;
+	extern const char* MAGENTA_BG;
+	extern const char* CYAN_BG;
+	extern const char* WHITE_BG;
+	extern const char* BRIGHT_RED_BG;
+	extern const char* BRIGHT_GREEN_BG;
+	extern const char* BRIGHT_YELLOW_BG;
+	extern const char* BRIGHT_BLUE_BG;
+	extern const char* BRIGHT_MAGENTA_BG;
+	extern const char* BRIGHT_CYAN_BG;
+	extern const char* BRIGHT_WHITE_BG;
 	extern const char* NONE;
 }// namespace LoggerColor
 
@@ -81,7 +95,6 @@ public:
 	 * @brief Just closes the output file of the logger.
 	 * Depending on what we decide to do with handling closing the file, when the
 	 * robot switches to opctrl or auton, the file may be reopened again.
-	 *
 	 */
 	void close();
 
@@ -91,7 +104,6 @@ public:
 	 */
 	void terminate();
 
-	// looks little iffy, but we do create copy in ctor of LogSource
 	std::shared_ptr<LogSource> createSource(std::string name, uint32_t timeout = 0,
 	                                        const char* color = LoggerColor::NONE);
 
@@ -170,6 +182,8 @@ public:
 	 *
 	 * @param level - Set level via bit operations. ex: DEBUG | INFO | WARNING
 	 */
+
+	// todo: change this to a toggle level function call instead
 	void setLevel(LogLevel level);
 
 	/**
@@ -204,9 +218,6 @@ public:
 		log(WARNING, pros::millis(), fmt, fmt::make_format_args(args...));
 	}
 
-	// DONT USE!
-	// causes program to hang entirely for some reason
-	// sometimes causes prefetch error and other times program just crashes somewhere
 	template<class... Args>
 	void error(std::string fmt, Args&&... args) {
 		if (!(logLevels & ERROR)) { return; }

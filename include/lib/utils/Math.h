@@ -64,11 +64,6 @@ namespace util {
 	}
 
 	template<class T>
-	constexpr bool fpLessThanEquals(T a, T b) {
-		return fpEquality(a, b) || a < b;
-	}
-
-	template<class T>
 	constexpr int sign(T n) {
 		return (n >= 0) - (n < 0);
 	}

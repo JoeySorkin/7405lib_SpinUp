@@ -1,6 +1,5 @@
 #pragma once
 
-#include "main.h"
 #include "pros/misc.hpp"
 #include "pros/rtos.hpp"
 #include <functional>
@@ -35,7 +34,6 @@ private:
 	Controller& operator=(const Controller&) = delete;
 
 	void backend();
-
 	void callCallback(const std::pair<ID, Digital>& key, ButtonMode mode, bool callDefault = false);
 
 public:

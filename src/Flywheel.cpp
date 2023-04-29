@@ -38,25 +38,22 @@ void Flywheel::initialize() {
 	sController->registerCallback([this]() { this->controllerVel -= 20; }, []() {}, Controller::master,
 	                              Controller::down, Controller::rising);
 
-	sController->registerCallback([this]() { setVelocity(2200); }, []() {}, Controller::master, Controller::a,
+	sController->registerCallback([this]() { setVelocity(2300); }, []() {}, Controller::master, Controller::a,
 	                              Controller::rising);
 
-	sController->registerCallback([this]() { setVelocity(2100); }, []() {}, Controller::master, Controller::b,
+	sController->registerCallback([this]() { setVelocity(2200); }, []() {}, Controller::master, Controller::b,
 	                              Controller::rising);
 
-	sController->registerCallback([this]() { rightExpansion.set_value(true); }, []() {}, Controller::master, Controller::right,
-	                              Controller::rising);
+	sController->registerCallback([this]() { rightExpansion.set_value(true); }, []() {}, Controller::master,
+	                              Controller::up, Controller::rising);
 
-	sController->registerCallback([this]() { leftExpansion.set_value(true); }, []() {}, Controller::master, Controller::down,
-	                              Controller::rising);
+	sController->registerCallback([this]() { leftExpansion.set_value(true); }, []() {}, Controller::master,
+	                              Controller::left, Controller::rising);
 
 	sController->registerCallback([this]() { blocker.set_value(true); }, []() {}, Controller::master, Controller::l2,
 	                              Controller::rising);
 
-	sController->registerCallback([this]() {
-		angleChangeState = !angleChangeState;
-		angleChange.set_value(angleChangeState);
-	}, []() {}, Controller::master, Controller::x,
+	sController->registerCallback([this]() { toggleAngleChange(); }, []() {}, Controller::master, Controller::x,
 	                              Controller::rising);
 
 	kF_lut.add_data(3863.160000, 3.106265);
@@ -97,10 +94,12 @@ void Flywheel::initialize() {
 	kI_lut.add_data(2350, 2);
 	kD_lut.add_data(2350, 0.001);
 	//
-	// kP_lut.add_data(2515, 8);
-	kP_lut.add_data(2515, 11.2);
+
+	kP_lut.add_data(2515, 11.2);// value was hitting nasty autons
+	// kP_lut.add_data(2515, 15);// testing
 	kI_lut.add_data(2515, 0.5);
-	kD_lut.add_data(2515, 0.005);
+	kD_lut.add_data(2515, 0.005);// originally - that was hitting nasty autons
+	// kD_lut.add_data(2515, 0.0075);// testing
 	//
 	kP_lut.add_data(2615, 11.2);
 	kI_lut.add_data(2615, 0.5);
@@ -224,7 +223,7 @@ void Flywheel::shoot_auton(double revamp) {
 
 void Flywheel::setVelocity(double set_vel) {
 	if (_target_speed.load() != set_vel) {
-		pros::c::controller_print(pros::E_CONTROLLER_MASTER, 2,0, "RPM: %f", set_vel);
+		pros::c::controller_print(pros::E_CONTROLLER_MASTER, 2, 0, "RPM: %f", set_vel);
 		_target_speed = set_vel;
 		pidf.setSetpoint(set_vel);
 		double new_kP = kP_lut.get_val(set_vel);
@@ -384,4 +383,9 @@ void Flywheel::triple_shoot_legit() {
 
 int Flywheel::getDisksInSilo() {
 	return disks_in_silo.load();
+}
+
+void Flywheel::toggleAngleChange() {
+	angleChangeState = !angleChangeState;
+	angleChange.set_value(angleChangeState);
 }

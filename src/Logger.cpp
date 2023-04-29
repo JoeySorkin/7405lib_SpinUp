@@ -29,20 +29,20 @@
 #define RESET "\x1B[0m"
 
 namespace LoggerColor {
-	const char* RED = "\x1B[41m";
-	const char* GREEN = "\x1B[42m";
-	const char* YELLOW = "\x1B[43m";
-	const char* BLUE = "\x1B[44m";
-	const char* MAGENTA = "\x1B[45m";
-	const char* CYAN = "\x1B[46m";
-	const char* WHITE = "\x1B[47m";
-	const char* BRIGHT_RED = "\x1B[101m";
-	const char* BRIGHT_GREEN = "\x1B[102m";
-	const char* BRIGHT_YELLOW = "\x1B[103m";
-	const char* BRIGHT_BLUE = "\x1B[104m";
-	const char* BRIGHT_MAGENTA = "\x1B[105m";
-	const char* BRIGHT_CYAN = "\x1B[106m";
-	const char* BRIGHT_WHITE = "\x1B[107m";
+	const char* RED_BG = "\x1B[41m";
+	const char* GREEN_BG = "\x1B[42m";
+	const char* YELLOW_BG = "\x1B[43m";
+	const char* BLUE_BG = "\x1B[44m";
+	const char* MAGENTA_BG = "\x1B[45m";
+	const char* CYAN_BG = "\x1B[46m";
+	const char* WHITE_BG = "\x1B[47m";
+	const char* BRIGHT_RED_BG = "\x1B[101m";
+	const char* BRIGHT_GREEN_BG = "\x1B[102m";
+	const char* BRIGHT_YELLOW_BG = "\x1B[103m";
+	const char* BRIGHT_BLUE_BG = "\x1B[104m";
+	const char* BRIGHT_MAGENTA_BG = "\x1B[105m";
+	const char* BRIGHT_CYAN_BG = "\x1B[106m";
+	const char* BRIGHT_WHITE_BG = "\x1B[107m";
 	const char* NONE = "";
 }// namespace LoggerColor
 

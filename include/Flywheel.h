@@ -15,7 +15,7 @@ private:
 	[[noreturn]] void runner(void* ignored);
 	std::atomic<bool> override = false;
 	double _last_vel, _last_filtered_vel;
-	double _actual_vel, _filtered_vel, controllerVel = 2000;
+	double _actual_vel, _filtered_vel, controllerVel = 2100;
 	double kF_shift = 0;
 	std::atomic<double> _target_speed;
 	std::atomic<bool> _coasting;
@@ -83,4 +83,6 @@ public:
 	bool getShootFlag();
 	void shoot_auton(double revamp = 300);
 	void boost_auton(double revamp = 300);
+
+	void toggleAngleChange();
 };
