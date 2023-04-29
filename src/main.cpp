@@ -255,5 +255,5 @@ void autonomous() {
 void opcontrol() { 
 	sDrive->setCurrentMotion(std::make_unique<OpControlMotion>());
 	sRobot->setOpMode(Robot::DRIVER);
-	sShooter->switchBandBoost();
+	// sShooter->switchBandBoost();
 }

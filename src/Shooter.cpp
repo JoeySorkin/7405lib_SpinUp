@@ -1,5 +1,7 @@
 #include "Shooter.h"
 #include "Constants.h"
+#include "pros/misc.h"
+#include "pros/misc.hpp"
 #include "pros/rtos.hpp"
 #include <cstddef>
 #include <cstdio>
@@ -38,6 +40,10 @@ void Shooter::shooterRunner(void* params){
             automaticScata();
         }  
         prevPos = scataRotation.get_position();
+
+        if(sController->getDigital(Controller::l2)){
+            switchBandBoost();
+        }
 
         if(pros::c::controller_get_digital_new_press(pros::E_CONTROLLER_MASTER, pros::E_CONTROLLER_DIGITAL_X))
         {
