@@ -2,6 +2,7 @@
 #include "fmt/core.h"
 #include "fmt/format.h"
 #include "pros/apix.h"
+#include "pros/rtos.hpp"
 #include <memory>
 #include <string_view>
 #include <unordered_map>
@@ -53,7 +54,6 @@ class Logger {
 	friend class LogSource;
 
 private:
-	static Logger* INSTANCE;
 	pros::task_t task;
 	FILE* logFile;
 	std::string filename;
@@ -67,8 +67,8 @@ private:
 	void backend();
 
 public:
-	static Logger* getInstance() {
-		if (!INSTANCE) { INSTANCE = new Logger(); }
+	inline static Logger& getInstance() {
+		static Logger INSTANCE;
 
 		return INSTANCE;
 	}
@@ -137,6 +137,7 @@ private:
 		// in ms - might have to do μs to sort out contentions on synchronization of
 		// messages from multiple sinks
 		uint32_t timestamp;
+		uint32_t len;// num of chars - excludes the \0
 
 		// this must be a pointer due to  how the RTOS's queue implementation is
 		// done because it's copied, the RTOS does a memcpy. memcpying the contents
@@ -145,7 +146,6 @@ private:
 		// ptr which will be dangling when the dtor of the string gets called God i
 		// love the risk of memory leaks
 		char* msg;
-		uint32_t len;// num of chars - excludes the \0
 	};
 
 	pros::c::queue_t mailboxConsole;
@@ -198,29 +198,29 @@ public:
 
 	// Can be treated sortof like a printf
 	// but formatting must follow fmtlib's specs
-	// https://fmt.dev/9.1.0/syntax.html
+	// https://fmt.dev/10.0.0/syntax.html
 
 	template<class... Args>
 	void debug(std::string fmt, Args&&... args) {
 		if (!(logLevels & DEBUG)) { return; }
-		log(DEBUG, pros::millis(), fmt, fmt::make_format_args(args...));
+		log(DEBUG, pros::micros(), fmt, fmt::make_format_args(args...));
 	}
 
 	template<class... Args>
 	void info(std::string fmt, Args&&... args) {
 		if (!(logLevels & INFO)) { return; }
-		log(INFO, pros::millis(), fmt, fmt::make_format_args(args...));
+		log(INFO, pros::micros(), fmt, fmt::make_format_args(args...));
 	}
 
 	template<class... Args>
 	void warn(std::string fmt, Args&&... args) {
 		if (!(logLevels & WARNING)) { return; }
-		log(WARNING, pros::millis(), fmt, fmt::make_format_args(args...));
+		log(WARNING, pros::micros(), fmt, fmt::make_format_args(args...));
 	}
 
 	template<class... Args>
 	void error(std::string fmt, Args&&... args) {
 		if (!(logLevels & ERROR)) { return; }
-		log(ERROR, pros::millis(), fmt, fmt::make_format_args(args...));
+		log(ERROR, pros::micros(), fmt, fmt::make_format_args(args...));
 	}
 };

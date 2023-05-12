@@ -3,8 +3,8 @@
 #include "lib/utils/Math.h"
 
 Motion::MotorVoltages OpControlMotion::calculateVoltages(kinState state) {
-	int power = sController->getAnalog(Controller::left_y);
-	int turn = sController->getAnalog(Controller::right_x);
+	int power = sController.getAnalog(Controller::left_y);
+	int turn = sController.getAnalog(Controller::right_x);
 
 	double a = 0;
 	double b = 1;

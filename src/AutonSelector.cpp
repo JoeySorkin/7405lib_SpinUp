@@ -26,7 +26,7 @@ AutonSelector::Button::Button(lv_obj_t* screen, const char* name, Auton auton) {
 	lv_btn_set_action(btn, LV_BTN_ACTION_CLICK, [](lv_obj_t* btn) -> lv_res_t {
 		uint32_t num = lv_obj_get_free_num(btn);
 		Auton auton = static_cast<Auton>(num);
-		sRobot->setAuton(auton);
+		sRobot.setAuton(auton);
 		return LV_RES_OK;
 	});
 
@@ -69,7 +69,7 @@ void AutonSelector::initialize() {
 void AutonSelector::showSelector() {
 	lv_scr_load(selectorScreen);
 
-	while (sRobot->getAuton() == Auton::NONE) { pros::delay(10); }
+	while (sRobot.getAuton() == Auton::NONE) { pros::delay(10); }
 }
 
 void AutonSelector::restoreLCD() {

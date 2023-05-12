@@ -18,7 +18,6 @@ public:
 private:
 	using DigitalFunc = std::function<void(void)>;
 
-	static Controller* INSTANCE;
 	pros::task_t task;
 	pros::Mutex mutex;
 
@@ -37,8 +36,8 @@ private:
 	void callCallback(const std::pair<ID, Digital>& key, ButtonMode mode, bool callDefault = false);
 
 public:
-	static Controller* getInstance() {
-		if (!INSTANCE) { INSTANCE = new Controller(); }
+	inline static Controller& getInstance() {
+		static Controller INSTANCE;
 
 		return INSTANCE;
 	}

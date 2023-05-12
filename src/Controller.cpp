@@ -6,8 +6,6 @@
 #include <mutex>
 #include <tuple>
 
-Controller* Controller::INSTANCE = nullptr;
-
 Controller::Controller() : task(nullptr), mutex(), buttonBinds(), buttonStates() {
 	// Initalize the button states to be false
 	for (size_t i = Digital::l1; i <= Digital::a; i++) {
@@ -17,7 +15,7 @@ Controller::Controller() : task(nullptr), mutex(), buttonBinds(), buttonStates()
 }
 
 void Controller::initialize() {
-	task = pros::c::task_create([](void* ign) { sController->backend(); }, nullptr, TASK_PRIORITY_DEFAULT,
+	task = pros::c::task_create([](void* ign) { sController.backend(); }, nullptr, TASK_PRIORITY_DEFAULT,
 	                            TASK_STACK_DEPTH_DEFAULT, "Controller");
 }
 
@@ -26,7 +24,7 @@ void Controller::backend() {
 		// poll for the new controller states
 		// and call corresponding callbacks when the conditions for a callback is met
 		if (pros::competition::is_autonomous() || pros::competition::is_disabled()) {
-			pros::delay(20);
+			pros::delay(10);
 			continue;
 		}
 

@@ -46,9 +46,6 @@ namespace LoggerColor {
 	const char* NONE = "";
 }// namespace LoggerColor
 
-
-Logger* Logger::INSTANCE = nullptr;
-
 Logger::Logger() : task(nullptr), logFile(nullptr), filename(), sources() {}
 
 void Logger::backend() {
@@ -132,7 +129,7 @@ void Logger::backend() {
 
 void Logger::initialize(std::string filename) {
 	// probably should set the prioirty to be TASK_PRIORITY_DEFAULT - 1
-	task = pros::c::task_create([](void* ign) { sLogger->backend(); }, nullptr, TASK_PRIORITY_DEFAULT,
+	task = pros::c::task_create([](void* ign) { sLogger.backend(); }, nullptr, TASK_PRIORITY_DEFAULT,
 	                            TASK_STACK_DEPTH_DEFAULT, "Logger");
 
 	this->filename = fmt::format("/usd/{}", filename);
@@ -224,29 +221,31 @@ const char* levelToColor(LogSource::LogLevel level) {
 }
 
 void LogSource::log(LogLevel level, uint32_t timestamp, std::string_view fmt, fmt::format_args args) {
+	// clean up this code
 	std::string_view levelName = levelToString(level);
 	const char* levelColor = levelToColor(level);
 
 	if (outputSources & CONSOLE) {
 		// AHHHHHHHH! WE FORMAT TO ANOTHER FORMAT
-		std::string formatted = fmt::format("[{:.2F} {}{}{}{} {}{}{}] {}", timestamp / 1000.0, BOLD BR_WHT, loggerColor,
-		                                    name, RESET, levelColor, levelName, RESET, fmt::vformat(fmt, args));
+		std::string formatted =
+		        fmt::format("[{:.2F} {}{}{}{} {}{}{}] {}", timestamp / 1000.0 / 1000.0, BOLD BR_WHT, loggerColor, name,
+		                    RESET, levelColor, levelName, RESET, fmt::vformat(fmt, args));
 
 		// allocates # of chars + 1 for \0
-		Message msg = {.timestamp = timestamp, .msg = new char[formatted.length() + 1], .len = formatted.length()};
+		Message msg = {.timestamp = timestamp, .len = formatted.length(), .msg = new char[formatted.length() + 1]};
 		strcpy(msg.msg, formatted.data());
 
 		pros::c::queue_append(mailboxConsole, &msg, timeout);
 	}
 
 	// don't even want to flood queue if a file isn't even open yet
-	if (outputSources & FILE && sLogger->logFile) {
+	if (outputSources & FILE && sLogger.logFile) {
 		// only difference is we get rid of color formatting
 		std::string formatted =
-		        fmt::format("[{:.2F} {} {}] {}", timestamp / 1000.0, name, levelName, fmt::vformat(fmt, args));
+		        fmt::format("[{:.2F} {} {}] {}", timestamp / 1000.0 / 1000.0, name, levelName, fmt::vformat(fmt, args));
 
 		// allocates # of chars + 1 for \0
-		Message msg = {.timestamp = timestamp, .msg = new char[formatted.length() + 1], .len = formatted.length()};
+		Message msg = {.timestamp = timestamp, .len = formatted.length(), .msg = new char[formatted.length() + 1]};
 		strcpy(msg.msg, formatted.data());
 
 		pros::c::queue_append(mailboxFile, &msg, timeout);

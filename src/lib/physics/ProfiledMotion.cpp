@@ -4,7 +4,7 @@
 #include "Odometry.h"
 #include "lib/utils/Math.h"
 
-LoggerPtr ProfiledMotion::logger = sLogger->createSource("ProfiledMotion", 0);
+LoggerPtr ProfiledMotion::logger = sLogger.createSource("ProfiledMotion", 0);
 
 ProfiledMotion::ProfiledMotion(double dist, double maxVel, double accel, double decel, double threshold)
     : threshold(threshold), errorSum(0), startPose(), profile(dist, accel, decel, maxVel), prevSign(dist >= 0) {
@@ -15,7 +15,7 @@ ProfiledMotion::ProfiledMotion(double dist, double maxVel, double accel, double 
 void ProfiledMotion::start() {
 	if (startTime == 0) {
 		logger->debug("Motion start. Total Time: {}\n", profile.getTotalTime());
-		startPose = sOdom->getCurrentState().position;
+		startPose = sOdom.getCurrentState().position;
 		Motion::start();
 	}
 }
@@ -79,7 +79,7 @@ Motion::MotorVoltages ProfiledMotion::calculateVoltages(kinState state) {
 	double FFRight = kVRight * targetState.vel + sign * kSRight;
 	FFRight += targetState.acc > 0 ? kARight * targetState.acc : kDeRight * targetState.acc;
 
-	auto curState = sOdom->getCurrentState();
+	auto curState = sOdom.getCurrentState();
 	double distTraveled = curState.position.distanceTo(startPose) * util::sign(targetState.pos);
 	double error = -1 * (distTraveled - targetState.pos);
 
@@ -111,6 +111,6 @@ Motion::MotorVoltages ProfiledMotion::calculateVoltages(kinState state) {
 }
 
 bool ProfiledMotion::isSettled(kinState state) {
-	double distTraveled = sOdom->getCurrentState().position.distanceTo(startPose);
+	double distTraveled = sOdom.getCurrentState().position.distanceTo(startPose);
 	return std::abs(profile.getTargetDist() - distTraveled) < threshold;
 }

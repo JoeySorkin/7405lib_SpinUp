@@ -2,24 +2,21 @@
 #include "Robot.h"
 #include "Controller.h"
 #include "Drive.h"
-#include "Flywheel.h"
 #include "Intake.h"
 #include "Logger.h"
-Robot* Robot::INSTANCE = nullptr;
 
 void Robot::initialize() {
-	sLogger->initialize("test.txt");
-	pros::delay(50);
-	sController->initialize();
-	pros::delay(50);
-	sOdom->initialize();
-	pros::delay(50);
-	sDrive->initialize();
-	pros::delay(50);
-	sFlywheel->initialize();
-	pros::delay(50);
-	sIntake->initialize();
-	pros::delay(50);
+	sLogger.initialize("test.txt");
+	// pros::delay(50);
+	sController.initialize();
+	// pros::delay(50);
+	sOdom.initialize();
+	// pros::delay(50);
+	sDrive.initialize();
+	// pros::delay(50);
+	// pros::delay(50);
+	sIntake.initialize();
+	// pros::delay(50);
 	setOpMode(AUTONOMOUS);
 }
 
@@ -27,10 +24,10 @@ void Robot::setOpMode(Robot::OpMode op) {
 	opmode.store(op);
 	switch (op) {
 		case DRIVER:
-			// sDrive->setBrakeMode(MOTOR_BRAKE_COAST);
+			// sDrive.setBrakeMode(MOTOR_BRAKE_COAST);
 			break;
 		case AUTONOMOUS:
-			// sDrive->setBrakeMode(MOTOR_BRAKE_HOLD);
+			// sDrive.setBrakeMode(MOTOR_BRAKE_HOLD);
 			break;
 	}
 }

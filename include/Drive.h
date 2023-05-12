@@ -10,6 +10,7 @@
 #include <memory>
 
 #define sDrive Drive::getInstance()
+
 class Drive {
 private:
 	Drive() = default;
@@ -24,11 +25,10 @@ private:
 	        backLeft{ports::backLeftMotor, true}, backRight{ports::backRightMotor, false};
 
 	// Motor Control
-	void setVoltageLeft(int16_t voltage);
-	void setVoltageRight(int16_t voltage);
+	void setVoltageLeft(int voltage);
+	void setVoltageRight(int voltage);
 
 	// General Stuff
-	static Drive* INSTANCE;
 	pros::task_t task;
 	LoggerPtr logger;
 
@@ -40,11 +40,12 @@ private:
 
 
 public:
-	static Drive* getInstance() {
-		if (!INSTANCE) { INSTANCE = new Drive(); }
+	inline static Drive& getInstance() {
+		static Drive INSTANCE;
 
 		return INSTANCE;
 	}
+
 	void initialize();
 	void setCurrentMotion(std::unique_ptr<Motion> motion);
 

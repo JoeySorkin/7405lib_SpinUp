@@ -17,8 +17,6 @@ private:
 
 	kinState curr_state;
 
-	static Odometry* INSTANCE;
-
 	Odometry();
 	Odometry(const Odometry&) = delete;
 	Odometry& operator=(const Odometry&) = delete;
@@ -27,8 +25,9 @@ private:
 	void printOdom(kinState state);
 
 public:
-	static Odometry* getInstance() {
-		if (!INSTANCE) { INSTANCE = new Odometry(); }
+	inline static Odometry& getInstance() {
+		static Odometry INSTANCE;
+
 		return INSTANCE;
 	}
 

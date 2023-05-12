@@ -6,7 +6,6 @@
 
 class Intake {
 private:
-	static Intake* INSTANCE;
 	pros::Motor_Group motors;
 
 	Intake();
@@ -14,8 +13,8 @@ private:
 	Intake& operator=(const Intake&) = delete;
 
 public:
-	static Intake* getInstance() {
-		if (!INSTANCE) { INSTANCE = new Intake(); }
+	inline static Intake& getInstance() {
+		static Intake INSTANCE;
 
 		return INSTANCE;
 	}

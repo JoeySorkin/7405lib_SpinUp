@@ -5,14 +5,12 @@
 #include "pros/motors.h"
 #include "pros/rtos.hpp"
 
-Drive* Drive::INSTANCE = nullptr;
-
 void Drive::initialize() {
-	currentMotion = std::make_unique<NullMotion>();
-	// currentMotion = std::make_unique<MaxAccMotion>();
-	INSTANCE->logger = sLogger->createSource("Drive");
+	sDrive.logger = sLogger.createSource("Drive");
 	resetPosition();
-	task = pros::c::task_create([](void* _) { sDrive->runner(_); }, nullptr, TASK_PRIORITY_DEFAULT,
+	currentMotion = std::make_unique<NullMotion>();
+
+	task = pros::c::task_create([](void* _) { sDrive.runner(_); }, nullptr, TASK_PRIORITY_DEFAULT,
 	                            TASK_STACK_DEPTH_DEFAULT, "Drive");
 }
 
@@ -32,12 +30,12 @@ void Drive::runner(void* ignored) {
 		}
 
 		// get computed motor voltages
-		auto motorVolts = currentMotion->calculateVoltages(sOdom->getCurrentState());
+		auto motorVolts = currentMotion->calculateVoltages(sOdom.getCurrentState());
 
 		setVoltageLeft(motorVolts.left);
 		setVoltageRight(motorVolts.right);
 
-		isSettled.store(currentMotion->isSettled(sOdom->getCurrentState()));
+		isSettled.store(currentMotion->isSettled(sOdom.getCurrentState()));
 
 		// double driveVoltage = (backLeft.get_voltage() + middleLeft.get_voltage() + frontLeft.get_voltage() +
 		//                        backRight.get_voltage() + middleRight.get_voltage() + frontRight.get_voltage()) /
@@ -93,18 +91,17 @@ bool Drive::waitUntilSettled(uint32_t timeout) {
 
 void Drive::setCurrentMotion(std::unique_ptr<Motion> motion) {
 	currentMotionMutex.take(TIMEOUT_MAX);
-	// destruct old motion to stop memory leaks
 	currentMotion = std::move(motion);
 	currentMotionMutex.give();
 }
 
-void Drive::setVoltageRight(int16_t voltage) {
+void Drive::setVoltageRight(int voltage) {
 	backRight.move_voltage(voltage);
 	frontRight.move_voltage(voltage);
 	middleRight.move_voltage(voltage);
 }
 
-void Drive::setVoltageLeft(int16_t voltage) {
+void Drive::setVoltageLeft(int voltage) {
 	backLeft.move_voltage(voltage);
 	frontLeft.move_voltage(voltage);
 	middleLeft.move_voltage(voltage);

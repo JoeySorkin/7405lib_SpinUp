@@ -10,8 +10,6 @@
 #include <string>
 #include <type_traits>
 
-Odometry* Odometry::INSTANCE = nullptr;
-
 Odometry::Odometry()
     : prev_b(0), prev_l(0), prev_r(0), leftWheel(ports::leftRotation), rightWheel(ports::rightRotation),
       backWheel(ports::backRotation) {
@@ -32,7 +30,7 @@ void Odometry::initialize() {
 	prev_b = 0;
 	prev_r = 0;
 	curr_state = kinState({0, 0, 0}, {0, 0, 0}, {0, 0, 0});
-	odom_task = pros::c::task_create([](void* _) { sOdom->updatePosition(_); }, nullptr, TASK_PRIORITY_DEFAULT,
+	odom_task = pros::c::task_create([](void* _) { sOdom.updatePosition(_); }, nullptr, TASK_PRIORITY_DEFAULT,
 	                                 TASK_STACK_DEPTH_DEFAULT, "Odometry Task");
 	leftWheel.reset();
 	rightWheel.reset();
@@ -62,7 +60,7 @@ void Odometry::updatePosition(void* params) {
 			l_dist = ((LE - prev_l) / 36000.0) * M_PI * odometers::leftDeadwheelDiameter;
 			prev_l = LE;
 		} else {
-			double LE = sDrive->getLeftPosition();
+			double LE = sDrive.getLeftPosition();
 			l_dist = ((LE - prev_l) / 360.0) * M_PI * odometers::leftDeadwheelDiameter;
 			prev_l = LE;
 		}
@@ -73,7 +71,7 @@ void Odometry::updatePosition(void* params) {
 			r_dist = ((RE - prev_r) / 36000.0) * M_PI * odometers::rightDeadwheelDiameter;
 			prev_r = RE;
 		} else {
-			double RE = sDrive->getRightPosition();
+			double RE = sDrive.getRightPosition();
 			r_dist = ((RE - prev_r) / 360.0) * M_PI * odometers::rightDeadwheelDiameter;
 			prev_r = RE;
 		}
